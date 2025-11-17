@@ -1,4 +1,7 @@
-import React from 'react';
+
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -11,6 +14,11 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, onCodeChange, highlightedLine }) => {
   const lines = code.split('\n');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div className="relative h-full font-code text-sm bg-muted/30 rounded-b-lg overflow-hidden">
@@ -30,14 +38,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onCodeChange, highlighted
           })}
         </div>
       </ScrollArea>
-       <div className="absolute inset-0 p-4 opacity-50 pointer-events-none">
-          <Textarea 
-            value={code} 
+       {isClient && (
+         <Textarea
+            value={code}
             onChange={(e) => onCodeChange(e.target.value)}
-            className="absolute inset-0 w-full h-full bg-transparent text-transparent caret-foreground border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 p-4 font-code text-sm leading-relaxed" 
-            style={{paddingLeft: '4rem'}}
+            className="absolute inset-0 w-full h-full bg-transparent text-transparent caret-foreground border-none resize-none focus-visible:ring-0 focus-visible:ring-offset-0 p-4 font-code text-sm leading-relaxed"
+            style={{paddingLeft: '3.5rem'}}
+            spellCheck="false"
           />
-        </div>
+       )}
     </div>
   );
 };
