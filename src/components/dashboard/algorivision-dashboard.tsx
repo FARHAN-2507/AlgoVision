@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { Save } from "lucide-react";
 import { algorithmCategories, algorithms } from '@/lib/algorithms';
 import type { Algorithm, ExecutionStep, Language } from '@/lib/types';
@@ -18,8 +19,16 @@ import CodeEditor from './code-editor';
 import Visualizer from './visualizer';
 import ControlsPanel from './controls-panel';
 import { useToast } from '@/hooks/use-toast';
-import { sleep } from '@/lib/utils';
 import { Label } from '../ui/label';
+
+// Function to generate a random array
+const generateRandomArray = (size: number): number[] => {
+  const arr = [];
+  for (let i = 0; i < size; i++) {
+    arr.push(Math.floor(Math.random() * 100) + 1);
+  }
+  return arr;
+};
 
 export function AlgoVisionDashboard() {
   const { toast } = useToast();
@@ -34,6 +43,8 @@ export function AlgoVisionDashboard() {
   const [speed, setSpeed] = useState(50); // From 1 to 100
 
   const [startNode, setStartNode] = useState<string | undefined>(undefined);
+  const [arraySize, setArraySize] = useState(15);
+  const [initialArray, setInitialArray] = useState<number[]>([]);
 
   const availableAlgorithms = useMemo(() => {
     return algorithms.filter(algo => algo.category === selectedCategory);
@@ -46,7 +57,7 @@ export function AlgoVisionDashboard() {
     return [];
   }, [selectedAlgorithm]);
 
-
+  // Effect to handle category changes
   useEffect(() => {
     if (availableAlgorithms.length > 0) {
       handleAlgorithmChange(availableAlgorithms[0].id);
@@ -55,12 +66,31 @@ export function AlgoVisionDashboard() {
       setStartNode(undefined);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
+  }, [selectedCategory, availableAlgorithms]);
 
+  // Effect to handle algorithm or language changes
   useEffect(() => {
     if (selectedAlgorithm) {
       setCode(selectedAlgorithm.code[language]);
-      setTrace(selectedAlgorithm.trace);
+      
+      const isDynamicArray = selectedAlgorithm.category === 'sorting' || selectedAlgorithm.category === 'searching';
+      
+      if (isDynamicArray) {
+        const newArray = generateRandomArray(arraySize);
+        setInitialArray(newArray);
+        const initialStep: ExecutionStep = {
+          stepId: 0,
+          type: 'initial',
+          source: { line: 1 },
+          state: { array: newArray },
+          explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
+        };
+        setTrace([initialStep]);
+      } else {
+        setTrace(selectedAlgorithm.trace);
+        setInitialArray([]);
+      }
+
       setCurrentStep(0);
       setIsPlaying(false);
       
@@ -73,9 +103,10 @@ export function AlgoVisionDashboard() {
     } else {
       setCode('');
       setTrace([]);
+      setInitialArray([]);
       setStartNode(undefined);
     }
-  }, [selectedAlgorithm, language, graphNodes]);
+  }, [selectedAlgorithm, language, arraySize, graphNodes]);
 
   const handleAlgorithmChange = (algoId: string) => {
     const algorithm = algorithms.find(a => a.id === algoId);
@@ -92,9 +123,22 @@ export function AlgoVisionDashboard() {
   };
 
   const handleReset = useCallback(() => {
+    const isDynamicArray = selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching';
+    if (isDynamicArray) {
+       const newArray = generateRandomArray(arraySize);
+       setInitialArray(newArray);
+       const initialStep: ExecutionStep = {
+         stepId: 0,
+         type: 'initial',
+         source: { line: 1 },
+         state: { array: newArray },
+         explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
+       };
+       setTrace([initialStep]);
+    }
     setCurrentStep(0);
     setIsPlaying(false);
-  }, []);
+  }, [selectedAlgorithm, arraySize]);
 
   const handleStepForward = useCallback(() => {
     if (currentStep < trace.length - 1) {
@@ -111,16 +155,17 @@ export function AlgoVisionDashboard() {
   }, [currentStep]);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && trace.length > 1) {
       const interval = (101 - speed) * 10;
       const timer = setTimeout(() => {
         handleStepForward();
       }, interval);
       return () => clearTimeout(timer);
     }
-  }, [isPlaying, currentStep, speed, handleStepForward]);
+  }, [isPlaying, currentStep, speed, handleStepForward, trace.length]);
 
   const currentExecutionStep = trace[currentStep];
+  const isDynamicArrayAlgorithm = selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 h-full">
@@ -157,6 +202,19 @@ export function AlgoVisionDashboard() {
                 </SelectContent>
               </Select>
             </div>
+
+            {isDynamicArrayAlgorithm && (
+               <div>
+                  <Label>Array Size ({arraySize})</Label>
+                  <Slider
+                    value={[arraySize]}
+                    onValueChange={(value) => setArraySize(value[0])}
+                    min={5}
+                    max={50}
+                    step={1}
+                  />
+               </div>
+            )}
 
             {selectedAlgorithm?.category === 'graph' && graphNodes.length > 0 && (
               <div>
@@ -229,6 +287,7 @@ export function AlgoVisionDashboard() {
           currentStep={currentStep}
           totalSteps={trace.length}
           executionStep={currentExecutionStep}
+          isDynamic={isDynamicArrayAlgorithm}
         />
       </div>
     </div>

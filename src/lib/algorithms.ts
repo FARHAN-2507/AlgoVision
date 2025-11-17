@@ -256,6 +256,80 @@ const mergeSortTrace: ExecutionStep[] = [
     { "stepId": 15, "type": "sorted", "source": { "line": 22 }, "state": { "array": [3, 27, 38, 43], "sortedIndices": [0, 1, 2, 3] }, "explanation": "The final merged array is sorted." }
 ];
 
+const radixSortJsCode = `function countingSort(arr, exp) {
+  const n = arr.length;
+  const output = new Array(n).fill(0);
+  const count = new Array(10).fill(0);
+
+  for (let i = 0; i < n; i++) {
+    const index = Math.floor(arr[i] / exp) % 10;
+    count[index]++;
+  }
+
+  for (let i = 1; i < 10; i++) {
+    count[i] += count[i - 1];
+  }
+
+  for (let i = n - 1; i >= 0; i--) {
+    const index = Math.floor(arr[i] / exp) % 10;
+    output[count[index] - 1] = arr[i];
+    count[index]--;
+  }
+
+  for (let i = 0; i < n; i++) {
+    arr[i] = output[i];
+  }
+}
+
+function radixSort(arr) {
+  const max = Math.max(...arr);
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    countingSort(arr, exp);
+  }
+  return arr;
+}`;
+
+const radixSortPyCode = `def counting_sort(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    
+    for i in range(n):
+        index = arr[i] // exp
+        count[index % 10] += 1
+        
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+        
+    i = n - 1
+    while i >= 0:
+        index = arr[i] // exp
+        output[count[index % 10] - 1] = arr[i]
+        count[index % 10] -= 1
+        i -= 1
+        
+    for i in range(len(arr)):
+        arr[i] = output[i]
+
+def radix_sort(arr):
+    max1 = max(arr)
+    exp = 1
+    while max1 / exp > 1:
+        counting_sort(arr, exp)
+        exp *= 10
+    return arr`;
+
+const radixSortTrace: ExecutionStep[] = [
+    { "stepId": 0, "type": "initial", "source": { "line": 29 }, "state": { "array": [170, 45, 75, 90, 802, 24, 2, 66] }, "explanation": "Initial unsorted array." },
+    { "stepId": 1, "type": "highlight", "source": { "line": 31 }, "state": { "array": [170, 45, 75, 90, 802, 24, 2, 66], "variables": { "exp": 1 } }, "explanation": "Start Radix Sort. Sorting by the least significant digit (1s place)." },
+    { "stepId": 2, "type": "swap", "source": { "line": 32 }, "state": { "array": [170, 90, 802, 2, 24, 45, 75, 66] }, "explanation": "After sorting by the 1s place. Notice the order based on the last digit." },
+    { "stepId": 3, "type": "highlight", "source": { "line": 31 }, "state": { "array": [170, 90, 802, 2, 24, 45, 75, 66], "variables": { "exp": 10 } }, "explanation": "Next, sorting by the 10s place." },
+    { "stepId": 4, "type": "swap", "source": { "line": 32 }, "state": { "array": [802, 2, 24, 45, 66, 170, 75, 90] }, "explanation": "After sorting by the 10s place." },
+    { "stepId": 5, "type": "highlight", "source": { "line": 31 }, "state": { "array": [802, 2, 24, 45, 66, 170, 75, 90], "variables": { "exp": 100 } }, "explanation": "Finally, sorting by the 100s place." },
+    { "stepId": 6, "type": "swap", "source": { "line": 32 }, "state": { "array": [2, 24, 45, 66, 75, 90, 170, 802] }, "explanation": "After sorting by the 100s place. The array is now fully sorted." },
+    { "stepId": 7, "type": "sorted", "source": { "line": 34 }, "state": { "array": [2, 24, 45, 66, 75, 90, 170, 802], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7] }, "explanation": "Radix sort is complete." }
+];
+
 const linearSearchJsCode = `function linearSearch(arr, target) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] === target) {
@@ -638,6 +712,17 @@ export const algorithms: Algorithm[] = [
         python: mergeSortPyCode,
     },
     trace: mergeSortTrace,
+  },
+  {
+    id: 'radix-sort',
+    name: 'Radix Sort',
+    description: 'A non-comparative sorting algorithm that sorts integers by processing individual digits. It sorts items by grouping them by the individual digits which share the same significant position and value.',
+    category: 'sorting',
+    code: {
+      javascript: radixSortJsCode,
+      python: radixSortPyCode,
+    },
+    trace: radixSortTrace,
   },
   {
     id: 'linear-search',
