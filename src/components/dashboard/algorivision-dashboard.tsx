@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -11,7 +12,6 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { Save } from "lucide-react";
 import { algorithmCategories, algorithms } from '@/lib/algorithms';
 import type { Algorithm, ExecutionStep, Language } from '@/lib/types';
@@ -20,15 +20,6 @@ import Visualizer from './visualizer';
 import ControlsPanel from './controls-panel';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
-
-// Function to generate a random array
-const generateRandomArray = (size: number): number[] => {
-  const arr = [];
-  for (let i = 0; i < size; i++) {
-    arr.push(Math.floor(Math.random() * 100) + 1);
-  }
-  return arr;
-};
 
 export function AlgoVisionDashboard() {
   const { toast } = useToast();
@@ -43,8 +34,6 @@ export function AlgoVisionDashboard() {
   const [speed, setSpeed] = useState(50); // From 1 to 100
 
   const [startNode, setStartNode] = useState<string | undefined>(undefined);
-  const [arraySize, setArraySize] = useState(15);
-  const [initialArray, setInitialArray] = useState<number[]>([]);
 
   const availableAlgorithms = useMemo(() => {
     return algorithms.filter(algo => algo.category === selectedCategory);
@@ -57,10 +46,6 @@ export function AlgoVisionDashboard() {
     return [];
   }, [selectedAlgorithm]);
   
-  const isDynamicArrayAlgorithm = useMemo(() => 
-    selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching'
-  , [selectedAlgorithm]);
-
   // Effect to handle category changes
   useEffect(() => {
     if (availableAlgorithms.length > 0) {
@@ -70,40 +55,13 @@ export function AlgoVisionDashboard() {
       setStartNode(undefined);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
-
-  // Set initial array on client mount for dynamic algorithms
-  useEffect(() => {
-    if (isDynamicArrayAlgorithm) {
-      const newArray = generateRandomArray(arraySize);
-      setInitialArray(newArray);
-    }
-  }, [isDynamicArrayAlgorithm, arraySize]);
+  }, [selectedCategory, availableAlgorithms]);
   
   // Effect to handle algorithm or language changes
   useEffect(() => {
     if (selectedAlgorithm) {
       setCode(selectedAlgorithm.code[language]);
-      
-      if (isDynamicArrayAlgorithm) {
-        // initialArray is set by another effect, so we use it here.
-        if (initialArray.length > 0) {
-          const initialStep: ExecutionStep = {
-            stepId: 0,
-            type: 'initial',
-            source: { line: 1 },
-            state: { array: initialArray },
-            explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
-          };
-          setTrace([initialStep]);
-        } else {
-          setTrace([]); // Empty trace while array is generating
-        }
-      } else {
-        setTrace(selectedAlgorithm.trace);
-        setInitialArray([]);
-      }
-
+      setTrace(selectedAlgorithm.trace);
       setCurrentStep(0);
       setIsPlaying(false);
       
@@ -112,14 +70,12 @@ export function AlgoVisionDashboard() {
       } else {
         setStartNode(undefined);
       }
-
     } else {
       setCode('');
       setTrace([]);
-      setInitialArray([]);
       setStartNode(undefined);
     }
-  }, [selectedAlgorithm, language, initialArray, isDynamicArrayAlgorithm, graphNodes]);
+  }, [selectedAlgorithm, language, graphNodes]);
 
   const handleAlgorithmChange = (algoId: string) => {
     const algorithm = algorithms.find(a => a.id === algoId);
@@ -136,21 +92,9 @@ export function AlgoVisionDashboard() {
   };
 
   const handleReset = useCallback(() => {
-    if (isDynamicArrayAlgorithm) {
-       const newArray = generateRandomArray(arraySize);
-       setInitialArray(newArray);
-       const initialStep: ExecutionStep = {
-         stepId: 0,
-         type: 'initial',
-         source: { line: 1 },
-         state: { array: newArray },
-         explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
-       };
-       setTrace([initialStep]);
-    }
     setCurrentStep(0);
     setIsPlaying(false);
-  }, [isDynamicArrayAlgorithm, arraySize]);
+  }, []);
 
   const handleStepForward = useCallback(() => {
     if (currentStep < trace.length - 1) {
@@ -213,19 +157,6 @@ export function AlgoVisionDashboard() {
                 </SelectContent>
               </Select>
             </div>
-
-            {isDynamicArrayAlgorithm && (
-               <div>
-                  <Label>Array Size ({arraySize})</Label>
-                  <Slider
-                    value={[arraySize]}
-                    onValueChange={(value) => setArraySize(value[0])}
-                    min={5}
-                    max={50}
-                    step={1}
-                  />
-               </div>
-            )}
 
             {selectedAlgorithm?.category === 'graph' && graphNodes.length > 0 && (
               <div>
@@ -298,7 +229,6 @@ export function AlgoVisionDashboard() {
           currentStep={currentStep}
           totalSteps={trace.length}
           executionStep={currentExecutionStep}
-          isDynamic={isDynamicArrayAlgorithm}
         />
       </div>
     </div>
