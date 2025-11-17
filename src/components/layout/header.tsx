@@ -35,7 +35,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-4">
-          {isAuthenticated ? (
+          {isAuthenticated && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -59,11 +59,6 @@ export function Header() {
                 <DropdownMenuItem>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <div className="hidden items-center gap-4 md:flex">
-              <Button variant="ghost">Log In</Button>
-              <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">Sign Up</Button>
-            </div>
           )}
           <Sheet>
             <SheetTrigger asChild>
@@ -82,10 +77,6 @@ export function Header() {
                         {link.label}
                     </Link>
                 ))}
-                 <div className="flex flex-col gap-4 pt-8">
-                    <Button variant="ghost">Log In</Button>
-                    <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">Sign Up</Button>
-                </div>
               </nav>
             </SheetContent>
           </Sheet>
