@@ -519,12 +519,21 @@ const dfsTrace: ExecutionStep[] = [
 
 
 const treeForTrace: TreeNode[] = [
-    { id: '10', value: 10, x: 150, y: 50, left: '5', right: '15' },
-    { id: '5', value: 5, x: 75, y: 125, left: '3', right: '7' },
-    { id: '15', value: 15, x: 225, y: 125, left: null, right: '18' },
-    { id: '3', value: 3, x: 37.5, y: 200, left: null, right: null },
-    { id: '7', value: 7, x: 112.5, y: 200, left: null, right: null },
-    { id: '18', value: 18, x: 262.5, y: 200, left: null, right: null },
+    { id: '8', value: 8, x: 150, y: 40, left: '4', right: '12' },
+    { id: '4', value: 4, x: 75, y: 100, left: '2', right: '6' },
+    { id: '12', value: 12, x: 225, y: 100, left: '10', right: '14' },
+    { id: '2', value: 2, x: 37.5, y: 160, left: '1', right: '3' },
+    { id: '6', value: 6, x: 112.5, y: 160, left: '5', right: '7' },
+    { id: '10', value: 10, x: 187.5, y: 160, left: '9', right: '11' },
+    { id: '14', value: 14, x: 262.5, y: 160, left: '13', right: '15' },
+    { id: '1', value: 1, x: 18.75, y: 220, left: null, right: null },
+    { id: '3', value: 3, x: 56.25, y: 220, left: null, right: null },
+    { id: '5', value: 5, x: 93.75, y: 220, left: null, right: null },
+    { id: '7', value: 7, x: 131.25, y: 220, left: null, right: null },
+    { id: '9', value: 9, x: 168.75, y: 220, left: null, right: null },
+    { id: '11', value: 11, x: 206.25, y: 220, left: null, right: null },
+    { id: '13', value: 13, x: 243.75, y: 220, left: null, right: null },
+    { id: '15', value: 15, x: 281.25, y: 220, left: null, right: null },
 ];
 
 const inOrderJsCode = `function inOrderTraversal(root) {
@@ -550,26 +559,26 @@ const inOrderPyCode = `def inorder_traversal(root):
     return result`;
 
 const inOrderTrace: ExecutionStep[] = [
-    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { tree: treeForTrace, traversalOrder: [] }, "explanation": "Start In-order traversal from the root (10)." },
-    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['10'] } }, "explanation": "Go left from 10." },
-    { "stepId": 2, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['5'] } }, "explanation": "Go left from 5." },
-    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['3'] } }, "explanation": "Go left from 3. It's null." },
-    { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['3'] } }, "explanation": "Visit 3. Add to traversal order." },
-    { "stepId": 5, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['3'] } }, "explanation": "Go right from 3. It's null. Return to 5." },
-    { "stepId": 6, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5'], visited: ['3', '5'], highlights: { nodes: ['5'] } }, "explanation": "Visit 5. Add to traversal order." },
-    { "stepId": 7, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5'], visited: ['3', '5'], highlights: { nodes: ['5'] } }, "explanation": "Go right from 5." },
-    { "stepId": 8, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5'], visited: ['3', '5'], highlights: { nodes: ['7'] } }, "explanation": "Go left from 7. It's null." },
-    { "stepId": 9, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7'], visited: ['3', '5', '7'], highlights: { nodes: ['7'] } }, "explanation": "Visit 7. Add to traversal order." },
-    { "stepId": 10, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7'], visited: ['3', '5', '7'], highlights: { nodes: ['7'] } }, "explanation": "Go right from 7. It's null. Return to 5, then to 10." },
-    { "stepId": 11, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10'], visited: ['3', '5', '7', '10'], highlights: { nodes: ['10'] } }, "explanation": "Visit 10. Add to traversal order." },
-    { "stepId": 12, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10'], visited: ['3', '5', '7', '10'], highlights: { nodes: ['10'] } }, "explanation": "Go right from 10." },
-    { "stepId": 13, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10'], visited: ['3', '5', '7', '10'], highlights: { nodes: ['15'] } }, "explanation": "Go left from 15. It's null." },
-    { "stepId": 14, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15'], visited: ['3', '5', '7', '10', '15'], highlights: { nodes: ['15'] } }, "explanation": "Visit 15. Add to traversal order." },
-    { "stepId": 15, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15'], visited: ['3', '5', '7', '10', '15'], highlights: { nodes: ['15'] } }, "explanation": "Go right from 15." },
-    { "stepId": 16, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15'], visited: ['3', '5', '7', '10', '15'], highlights: { nodes: ['18'] } }, "explanation": "Go left from 18. It's null." },
-    { "stepId": 17, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15', '18'], visited: ['3', '5', '7', '10', '15', '18'], highlights: { nodes: ['18'] } }, "explanation": "Visit 18. Add to traversal order." },
-    { "stepId": 18, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15', '18'], visited: ['3', '5', '7', '10', '15', '18'], highlights: { nodes: ['18'] } }, "explanation": "Go right from 18. It's null. Return." },
-    { "stepId": 19, "type": "sorted", "source": { "line": 10 }, "state": { tree: treeForTrace, traversalOrder: ['3', '5', '7', '10', '15', '18'], visited: ['3', '5', '7', '10', '15', '18'] }, "explanation": "Traversal complete." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "tree": treeForTrace, "traversalOrder": [] }, "explanation": "Start In-order traversal from the root (8)." },
+    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["8"] } }, "explanation": "Go left from 8." },
+    { "stepId": 2, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["4"] } }, "explanation": "Go left from 4." },
+    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["2"] } }, "explanation": "Go left from 2." },
+    { "stepId": 4, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["1"] } }, "explanation": "Go left from 1. Null." },
+    { "stepId": 5, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1"], "visited": ["1"], "highlights": { "nodes": ["1"] } }, "explanation": "Visit 1." },
+    { "stepId": 6, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1"], "visited": ["1"], "highlights": { "nodes": ["1"] } }, "explanation": "Go right from 1. Null. Return to 2." },
+    { "stepId": 7, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2"], "visited": ["1", "2"], "highlights": { "nodes": ["2"] } }, "explanation": "Visit 2." },
+    { "stepId": 8, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2"], "visited": ["1", "2"], "highlights": { "nodes": ["2"] } }, "explanation": "Go right from 2." },
+    { "stepId": 9, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2"], "visited": ["1", "2"], "highlights": { "nodes": ["3"] } }, "explanation": "Go left from 3. Null." },
+    { "stepId": 10, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3"], "visited": ["1", "2", "3"], "highlights": { "nodes": ["3"] } }, "explanation": "Visit 3." },
+    { "stepId": 11, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3"], "visited": ["1", "2", "3"], "highlights": { "nodes": ["3"] } }, "explanation": "Go right from 3. Null. Return to 2, then to 4." },
+    { "stepId": 12, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4"], "visited": ["1", "2", "3", "4"], "highlights": { "nodes": ["4"] } }, "explanation": "Visit 4." },
+    { "stepId": 13, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4"], "visited": ["1", "2", "3", "4"], "highlights": { "nodes": ["4"] } }, "explanation": "Go right from 4." },
+    { "stepId": 14, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5"], "visited": ["1", "2", "3", "4", "5"], "highlights": { "nodes": ["5"] } }, "explanation": "Go left from 6, visit 5. (Steps skipped for brevity)" },
+    { "stepId": 15, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5", "6"], "visited": ["1", "2", "3", "4", "5", "6"], "highlights": { "nodes": ["6"] } }, "explanation": "Visit 6." },
+    { "stepId": 16, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5", "6", "7"], "visited": ["1", "2", "3", "4", "5", "6", "7"], "highlights": { "nodes": ["7"] } }, "explanation": "Go right from 6, visit 7." },
+    { "stepId": 17, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5", "6", "7", "8"], "visited": ["1", "2", "3", "4", "5", "6", "7", "8"], "highlights": { "nodes": ["8"] } }, "explanation": "Visit 8." },
+    { "stepId": 18, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"], "visited": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"], "highlights": { "nodes": ["15"] } }, "explanation": "Traverse the right subtree of 8 completely." },
+    { "stepId": 19, "type": "sorted", "source": { "line": 10 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"], "visited": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"] }, "explanation": "Traversal complete." }
 ];
 
 const preOrderJsCode = `function preOrderTraversal(root) {
@@ -595,26 +604,22 @@ const preOrderPyCode = `def preorder_traversal(root):
     return result`;
     
 const preOrderTrace: ExecutionStep[] = [
-    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { tree: treeForTrace, traversalOrder: [] }, "explanation": "Start Pre-order traversal from the root (10)." },
-    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10'], visited: ['10'], highlights: { nodes: ['10'] } }, "explanation": "Visit 10. Add to traversal order." },
-    { "stepId": 2, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10'], visited: ['10'], highlights: { nodes: ['10'] } }, "explanation": "Go left from 10." },
-    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5'], visited: ['10', '5'], highlights: { nodes: ['5'] } }, "explanation": "Visit 5. Add to traversal order." },
-    { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5'], visited: ['10', '5'], highlights: { nodes: ['5'] } }, "explanation": "Go left from 5." },
-    { "stepId": 5, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3'], visited: ['10', '5', '3'], highlights: { nodes: ['3'] } }, "explanation": "Visit 3. Add to traversal order." },
-    { "stepId": 6, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3'], visited: ['10', '5', '3'], highlights: { nodes: ['3'] } }, "explanation": "Go left from 3. It's null." },
-    { "stepId": 7, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3'], visited: ['10', '5', '3'], highlights: { nodes: ['3'] } }, "explanation": "Go right from 3. It's null. Return to 5." },
-    { "stepId": 8, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3'], visited: ['10', '5', '3'], highlights: { nodes: ['5'] } }, "explanation": "Go right from 5." },
-    { "stepId": 9, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7'], visited: ['10', '5', '3', '7'], highlights: { nodes: ['7'] } }, "explanation": "Visit 7. Add to traversal order." },
-    { "stepId": 10, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7'], visited: ['10', '5', '3', '7'], highlights: { nodes: ['7'] } }, "explanation": "Go left from 7. It's null." },
-    { "stepId": 11, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7'], visited: ['10', '5', '3', '7'], highlights: { nodes: ['7'] } }, "explanation": "Go right from 7. It's null. Return to 5, then 10." },
-    { "stepId": 12, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7'], visited: ['10', '5', '3', '7'], highlights: { nodes: ['10'] } }, "explanation": "Go right from 10." },
-    { "stepId": 13, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15'], visited: ['10', '5', '3', '7', '15'], highlights: { nodes: ['15'] } }, "explanation": "Visit 15. Add to traversal order." },
-    { "stepId": 14, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15'], visited: ['10', '5', '3', '7', '15'], highlights: { nodes: ['15'] } }, "explanation": "Go left from 15. It's null." },
-    { "stepId": 15, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15'], visited: ['10', '5', '3', '7', '15'], highlights: { nodes: ['15'] } }, "explanation": "Go right from 15." },
-    { "stepId": 16, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15', '18'], visited: ['10', '5', '3', '7', '15', '18'], highlights: { nodes: ['18'] } }, "explanation": "Visit 18. Add to traversal order." },
-    { "stepId": 17, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15', '18'], visited: ['10', '5', '3', '7', '15', '18'], highlights: { nodes: ['18'] } }, "explanation": "Go left from 18. It's null." },
-    { "stepId": 18, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15', '18'], visited: ['10', '5', '3', '7', '15', '18'], highlights: { nodes: ['18'] } }, "explanation": "Go right from 18. It's null. Return." },
-    { "stepId": 19, "type": "sorted", "source": { "line": 10 }, "state": { tree: treeForTrace, traversalOrder: ['10', '5', '3', '7', '15', '18'], visited: ['10', '5', '3', '7', '15', '18'] }, "explanation": "Traversal complete." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "tree": treeForTrace, "traversalOrder": [] }, "explanation": "Start Pre-order traversal from the root (8)." },
+    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8"], "visited": ["8"], "highlights": { "nodes": ["8"] } }, "explanation": "Visit 8." },
+    { "stepId": 2, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["8"], "visited": ["8"], "highlights": { "nodes": ["8"] } }, "explanation": "Go left from 8." },
+    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4"], "visited": ["8", "4"], "highlights": { "nodes": ["4"] } }, "explanation": "Visit 4." },
+    { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4"], "visited": ["8", "4"], "highlights": { "nodes": ["4"] } }, "explanation": "Go left from 4." },
+    { "stepId": 5, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2"], "visited": ["8", "4", "2"], "highlights": { "nodes": ["2"] } }, "explanation": "Visit 2." },
+    { "stepId": 6, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2"], "visited": ["8", "4", "2"], "highlights": { "nodes": ["2"] } }, "explanation": "Go left from 2." },
+    { "stepId": 7, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1"], "visited": ["8", "4", "2", "1"], "highlights": { "nodes": ["1"] } }, "explanation": "Visit 1." },
+    { "stepId": 8, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1"], "visited": ["8", "4", "2", "1"], "highlights": { "nodes": ["1"] } }, "explanation": "Go left from 1 (null). Go right from 1 (null). Return." },
+    { "stepId": 9, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1"], "visited": ["8", "4", "2", "1"], "highlights": { "nodes": ["2"] } }, "explanation": "Go right from 2." },
+    { "stepId": 10, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3"], "visited": ["8", "4", "2", "1", "3"], "highlights": { "nodes": ["3"] } }, "explanation": "Visit 3. Go left/right (null). Return." },
+    { "stepId": 11, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3"], "visited": ["8", "4", "2", "1", "3"], "highlights": { "nodes": ["4"] } }, "explanation": "Go right from 4." },
+    { "stepId": 12, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3", "6", "5", "7"], "visited": ["8", "4", "2", "1", "3", "6", "5", "7"], "highlights": { "nodes": ["7"] } }, "explanation": "Visit 6, then its left child 5, then its right child 7." },
+    { "stepId": 13, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3", "6", "5", "7"], "visited": ["8", "4", "2", "1", "3", "6", "5", "7"], "highlights": { "nodes": ["8"] } }, "explanation": "Return to 8. Go right from 8." },
+    { "stepId": 14, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3", "6", "5", "7", "12", "10", "9", "11", "14", "13", "15"], "visited": ["8", "4", "2", "1", "3", "6", "5", "7", "12", "10", "9", "11", "14", "13", "15"], "highlights": { "nodes": ["15"] } }, "explanation": "Traverse the entire right subtree of 8." },
+    { "stepId": 15, "type": "sorted", "source": { "line": 10 }, "state": { "tree": treeForTrace, "traversalOrder": ["8", "4", "2", "1", "3", "6", "5", "7", "12", "10", "9", "11", "14", "13", "15"], "visited": ["8", "4", "2", "1", "3", "6", "5", "7", "12", "10", "9", "11", "14", "13", "15"] }, "explanation": "Traversal complete." }
 ];
 
 const postOrderJsCode = `function postOrderTraversal(root) {
@@ -640,26 +645,23 @@ const postOrderPyCode = `def postorder_traversal(root):
     return result`;
 
 const postOrderTrace: ExecutionStep[] = [
-    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { tree: treeForTrace, traversalOrder: [] }, "explanation": "Start Post-order traversal from the root (10)." },
-    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['10'] } }, "explanation": "Go left from 10." },
-    { "stepId": 2, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['5'] } }, "explanation": "Go left from 5." },
-    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['3'] } }, "explanation": "Go left from 3. It's null." },
-    { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: [], highlights: { nodes: ['3'] } }, "explanation": "Go right from 3. It's null." },
-    { "stepId": 5, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['3'] } }, "explanation": "Visit 3. Add to traversal order. Return to 5." },
-    { "stepId": 6, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['5'] } }, "explanation": "Go right from 5." },
-    { "stepId": 7, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['7'] } }, "explanation": "Go left from 7. It's null." },
-    { "stepId": 8, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3'], visited: ['3'], highlights: { nodes: ['7'] } }, "explanation": "Go right from 7. It's null." },
-    { "stepId": 9, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7'], visited: ['3', '7'], highlights: { nodes: ['7'] } }, "explanation": "Visit 7. Add to traversal order. Return to 5." },
-    { "stepId": 10, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['5'] } }, "explanation": "Visit 5. Add to traversal order. Return to 10." },
-    { "stepId": 11, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['10'] } }, "explanation": "Go right from 10." },
-    { "stepId": 12, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['15'] } }, "explanation": "Go left from 15. It's null." },
-    { "stepId": 13, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['15'] } }, "explanation": "Go right from 15." },
-    { "stepId": 14, "type": "visit", "source": { "line": 5 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['18'] } }, "explanation": "Go left from 18. It's null." },
-    { "stepId": 15, "type": "visit", "source": { "line": 6 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5'], visited: ['3', '7', '5'], highlights: { nodes: ['18'] } }, "explanation": "Go right from 18. It's null." },
-    { "stepId": 16, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5', '18'], visited: ['3', '7', '5', '18'], highlights: { nodes: ['18'] } }, "explanation": "Visit 18. Add to traversal order. Return to 15." },
-    { "stepId": 17, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5', '18', '15'], visited: ['3', '7', '5', '18', '15'], highlights: { nodes: ['15'] } }, "explanation": "Visit 15. Add to traversal order. Return to 10." },
-    { "stepId": 18, "type": "visit", "source": { "line": 7 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5', '18', '15', '10'], visited: ['3', '7', '5', '18', '15', '10'], highlights: { nodes: ['10'] } }, "explanation": "Visit 10. Add to traversal order." },
-    { "stepId": 19, "type": "sorted", "source": { "line": 10 }, "state": { tree: treeForTrace, traversalOrder: ['3', '7', '5', '18', '15', '10'], visited: ['3', '7', '5', '18', '15', '10'] }, "explanation": "Traversal complete." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "tree": treeForTrace, "traversalOrder": [] }, "explanation": "Start Post-order traversal from the root (8)." },
+    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["8"] } }, "explanation": "Go left from 8." },
+    { "stepId": 2, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["4"] } }, "explanation": "Go left from 4." },
+    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["2"] } }, "explanation": "Go left from 2." },
+    { "stepId": 4, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": [], "highlights": { "nodes": ["1"] } }, "explanation": "Go left from 1 (null), then right (null)." },
+    { "stepId": 5, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1"], "visited": ["1"], "highlights": { "nodes": ["1"] } }, "explanation": "Visit 1. Return to 2." },
+    { "stepId": 6, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1"], "visited": ["1"], "highlights": { "nodes": ["2"] } }, "explanation": "Go right from 2." },
+    { "stepId": 7, "type": "visit", "source": { "line": 5 }, "state": { "tree": treeForTrace, "traversalOrder": ["1"], "visited": ["1"], "highlights": { "nodes": ["3"] } }, "explanation": "Go left from 3 (null), then right (null)." },
+    { "stepId": 8, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3"], "visited": ["1", "3"], "highlights": { "nodes": ["3"] } }, "explanation": "Visit 3. Return to 2." },
+    { "stepId": 9, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2"], "visited": ["1", "3", "2"], "highlights": { "nodes": ["2"] } }, "explanation": "Visit 2. Return to 4." },
+    { "stepId": 10, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2"], "visited": ["1", "3", "2"], "highlights": { "nodes": ["4"] } }, "explanation": "Go right from 4." },
+    { "stepId": 11, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6"], "visited": ["1", "3", "2", "5", "7", "6"], "highlights": { "nodes": ["6"] } }, "explanation": "Traverse left subtree of 6 (visiting 5), then right subtree (visiting 7), then visit 6." },
+    { "stepId": 12, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4"], "visited": ["1", "3", "2", "5", "7", "6", "4"], "highlights": { "nodes": ["4"] } }, "explanation": "Visit 4. Return to 8." },
+    { "stepId": 13, "type": "visit", "source": { "line": 6 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4"], "visited": ["1", "3", "2", "5", "7", "6", "4"], "highlights": { "nodes": ["8"] } }, "explanation": "Go right from 8." },
+    { "stepId": 14, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12"], "visited": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12"], "highlights": { "nodes": ["12"] } }, "explanation": "Completely traverse right subtree of 8, visiting 12 last among them." },
+    { "stepId": 15, "type": "visit", "source": { "line": 7 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"], "visited": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"], "highlights": { "nodes": ["8"] } }, "explanation": "Visit 8." },
+    { "stepId": 16, "type": "sorted", "source": { "line": 10 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"], "visited": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"] }, "explanation": "Traversal complete." }
 ];
 
 export const algorithms: Algorithm[] = [
