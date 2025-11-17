@@ -12,15 +12,15 @@ const BarChartVisualizer: React.FC<BarChartVisualizerProps> = ({ state }) => {
 
   const getColor = (index: number) => {
     if (sortedIndices.includes(index)) {
-      return 'bg-green-500'; // Found or sorted
+      return 'bg-chart-2 text-primary-foreground'; // Found or sorted
     }
     if (swaps.includes(index)) {
-      return 'bg-accent'; // Swapping
+      return 'bg-accent text-accent-foreground'; // Swapping
     }
     if (comparisons.includes(index)) {
-      return 'bg-yellow-500'; // Comparing
+      return 'bg-accent text-accent-foreground'; // Comparing
     }
-    return 'bg-primary';
+    return 'bg-primary text-primary-foreground';
   };
 
   return (
@@ -35,7 +35,7 @@ const BarChartVisualizer: React.FC<BarChartVisualizerProps> = ({ state }) => {
           style={{ height: `${(value / maxValue) * 100}%` }}
         >
           {array.length < 20 && (
-             <span className="text-xs font-bold text-primary-foreground transform -translate-y-5">{value}</span>
+             <span className="text-xs font-bold transform -translate-y-5">{value}</span>
           )}
         </div>
       ))}
