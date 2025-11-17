@@ -1,5 +1,5 @@
 import React from 'react';
-import { VisualizerState } from '@/lib/types';
+import { VisualizerState, GraphNode, GraphEdge } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 interface GraphVisualizerProps {
@@ -7,13 +7,14 @@ interface GraphVisualizerProps {
 }
 
 const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
-  const { graph, highlights, visited = [] } = state;
+  const { graph, highlights, visited = [], costs, parents } = state;
 
   if (!graph) {
     return <p>No graph data available.</p>;
   }
 
   const { nodes, edges } = graph;
+  const nodeMap = new Map<string, GraphNode>(nodes.map(n => [n.id, n]));
 
   const getNodeColor = (nodeId: string) => {
     if (highlights?.nodes?.includes(nodeId)) {
@@ -36,24 +37,23 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
       text: 'hsl(var(--muted-foreground))',
     };
   };
+  
+  const getEdgeHighlight = (edge: GraphEdge) => {
+      return highlights?.edges?.some(
+        (e) => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
+      );
+  }
 
-  const getEdgeColor = (edge: { from: string; to: string }) => {
-    const isHighlighted = highlights?.edges?.some(
-      (e) => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
-    );
-
-    if (isHighlighted) {
+  const getEdgeColor = (edge: GraphEdge) => {
+    if (getEdgeHighlight(edge)) {
       return 'hsl(var(--accent))';
     }
     
-    // Check if both nodes of the edge have been visited
-    // and the edge is part of the traversal path
+    // For traversal algorithms
     const fromIndex = visited.indexOf(edge.from);
     const toIndex = visited.indexOf(edge.to);
     
     if (fromIndex > -1 && toIndex > -1) {
-        // A simple check to see if they are adjacent in the visited array
-        // This is a heuristic and might not be perfect for all graph structures
         if (Math.abs(fromIndex - toIndex) === 1 || (highlights?.nodes?.includes(edge.from) && visited.includes(edge.to)) || (highlights?.nodes?.includes(edge.to) && visited.includes(edge.from)) ) {
             return 'hsl(var(--primary))';
         }
@@ -64,7 +64,7 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
 
   return (
     <div className="w-full h-full relative bg-muted/30 rounded-lg p-4">
-      <svg className="w-full h-full" viewBox="0 0 300 300">
+      <svg className="w-full h-full" viewBox="0 0 400 300">
         <defs>
           <marker
             id="arrow"
@@ -82,24 +82,37 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
         {/* Edges */}
         <g>
           {edges.map((edge, index) => {
-            const fromNode = nodes.find((n) => n.id === edge.from);
-            const toNode = nodes.find((n) => n.id === edge.to);
+            const fromNode = nodeMap.get(edge.from);
+            const toNode = nodeMap.get(edge.to);
             if (!fromNode || !toNode) return null;
 
             const edgeColor = getEdgeColor(edge);
+            const isHighlighted = getEdgeHighlight(edge);
 
             return (
-              <line
-                key={`${edge.from}-${edge.to}-${index}`}
-                x1={fromNode.x}
-                y1={fromNode.y}
-                x2={toNode.x}
-                y2={toNode.y}
-                stroke={edgeColor}
-                strokeWidth="2"
-                className="transition-all duration-300"
-                markerEnd={graph.directed ? "url(#arrow)" : undefined}
-              />
+              <g key={`${edge.from}-${edge.to}-${index}`}>
+                <line
+                  x1={fromNode.x}
+                  y1={fromNode.y}
+                  x2={toNode.x}
+                  y2={toNode.y}
+                  stroke={edgeColor}
+                  strokeWidth={isHighlighted ? "3" : "2"}
+                  className="transition-all duration-300"
+                  markerEnd={graph.directed ? "url(#arrow)" : undefined}
+                />
+                {edge.weight && (
+                    <text
+                        x={(fromNode.x! + toNode.x!) / 2}
+                        y={(fromNode.y! + toNode.y!) / 2 - 5}
+                        textAnchor="middle"
+                        fill="hsl(var(--foreground))"
+                        className="text-xs font-bold"
+                    >
+                        {edge.weight}
+                    </text>
+                )}
+              </g>
             );
           })}
         </g>
@@ -108,6 +121,7 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
         <g>
           {nodes.map((node) => {
             const colors = getNodeColor(node.id);
+            const cost = costs ? costs[node.id] : null;
             return (
               <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
                 <circle
@@ -125,6 +139,16 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
                 >
                   {node.label}
                 </text>
+                {cost !== null && cost !== undefined && (
+                     <text
+                        textAnchor="middle"
+                        dy="-1.8em"
+                        fill="hsl(var(--foreground))"
+                        className="text-xs font-bold"
+                    >
+                       {cost === Infinity ? '∞' : cost}
+                    </text>
+                )}
               </g>
             );
           })}
@@ -133,12 +157,9 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
 
       {/* State Display */}
       <div className="absolute bottom-2 left-2 bg-background/80 p-2 rounded-md text-xs w-full max-w-[calc(100%-1rem)]">
-         <div className="font-bold mb-1">Queue:</div>
-         <div className="truncate">[{state.queue?.join(', ') || ''}]</div>
-         <div className="font-bold mt-2 mb-1">Stack:</div>
-         <div className="truncate">[{state.stack?.join(', ') || ''}]</div>
-         <div className="font-bold mt-2 mb-1">Visited:</div>
-         <div className="truncate">[{visited.join(', ') || ''}]</div>
+         {state.queue && <div><div className="font-bold mb-1">Queue:</div> <div className="truncate">[{state.queue?.join(', ') || ''}]</div></div>}
+         {state.stack && <div><div className="font-bold mt-2 mb-1">Stack:</div><div className="truncate">[{state.stack?.join(', ') || ''}]</div></div>}
+         {visited.length > 0 && <div><div className="font-bold mt-2 mb-1">Visited:</div><div className="truncate">[{visited.join(', ') || ''}]</div></div>}
       </div>
     </div>
   );

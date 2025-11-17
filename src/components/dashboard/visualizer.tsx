@@ -26,6 +26,8 @@ const Visualizer: React.FC<VisualizerProps> = ({ algorithm, executionStep }) => 
       case 'searching':
         return <BarChartVisualizer state={executionStep.state} />;
       case 'graph':
+      case 'shortest-path':
+      case 'mst':
         return <GraphVisualizer state={executionStep.state} />;
       case 'tree':
         return <TreeVisualizer state={executionStep.state} />;

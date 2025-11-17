@@ -664,6 +664,164 @@ const postOrderTrace: ExecutionStep[] = [
     { "stepId": 16, "type": "sorted", "source": { "line": 10 }, "state": { "tree": treeForTrace, "traversalOrder": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"], "visited": ["1", "3", "2", "5", "7", "6", "4", "9", "11", "10", "13", "15", "14", "12", "8"] }, "explanation": "Traversal complete." }
 ];
 
+const weightedGraphForTrace = {
+  nodes: [
+    { id: 'A', label: 'A', x: 50, y: 150 },
+    { id: 'B', label: 'B', x: 150, y: 50 },
+    { id: 'C', label: 'C', x: 150, y: 250 },
+    { id: 'D', label: 'D', x: 250, y: 50 },
+    { id: 'E', label: 'E', x: 250, y: 250 },
+    { id: 'F', label: 'F', x: 350, y: 150 },
+  ],
+  edges: [
+    { from: 'A', to: 'B', weight: 7 }, { from: 'A', to: 'C', weight: 9 },
+    { from: 'A', to: 'D', weight: 14 },
+    { from: 'B', to: 'D', weight: 2 },
+    { from: 'C', to: 'E', weight: 2 },
+    { from: 'D', to: 'E', weight: 10 }, { from: 'D', to: 'F', weight: 9 },
+    { from: 'E', to: 'F', weight: 11 },
+  ],
+  directed: true,
+};
+
+const dijkstraJsCode = `function dijkstra(graph, startNode) {
+    const costs = {};
+    const parents = {};
+    const processed = [];
+
+    Object.keys(graph.nodes).forEach(node => {
+        costs[node] = Infinity;
+    });
+    costs[startNode] = 0;
+
+    let node = findLowestCostNode(costs, processed);
+
+    while (node) {
+        let cost = costs[node];
+        let neighbors = graph.edges.filter(e => e.from === node);
+        for (let n of neighbors) {
+            let newCost = cost + n.weight;
+            if (newCost < costs[n.to]) {
+                costs[n.to] = newCost;
+                parents[n.to] = node;
+            }
+        }
+        processed.push(node);
+        node = findLowestCostNode(costs, processed);
+    }
+    return { costs, parents };
+}`;
+
+const dijkstraPyCode = `import heapq
+
+def dijkstra(graph, start_node):
+    costs = {node['id']: float('infinity') for node in graph['nodes']}
+    costs[start_node] = 0
+    pq = [(0, start_node)]
+    parents = {}
+
+    while pq:
+        cost, node = heapq.heappop(pq)
+
+        if cost > costs[node]:
+            continue
+
+        for edge in [e for e in graph['edges'] if e['from'] == node]:
+            new_cost = cost + edge['weight']
+            if new_cost < costs[edge['to']]:
+                costs[edge['to']] = new_cost
+                parents[edge['to']] = node
+                heapq.heappush(pq, (new_cost, edge['to']))
+
+    return {'costs': costs, 'parents': parents}`;
+
+const dijkstraTrace: ExecutionStep[] = [
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "graph": weightedGraphForTrace, "costs": { 'A': 0, 'B': Infinity, 'C': Infinity, 'D': Infinity, 'E': Infinity, 'F': Infinity }, "parents": {}, "visited": [] }, "explanation": "Start Dijkstra's from A. Initialize costs: A is 0, all others are Infinity." },
+    { "stepId": 1, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["A"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 14 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'A' }, "visited": ["A"] }, "explanation": "Visit A. Update costs for neighbors B (7), C (9), and D (14)." },
+    { "stepId": 2, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["B"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B' }, "visited": ["A", "B"] }, "explanation": "Visit B (lowest cost). Update cost for neighbor D to 7+2=9." },
+    { "stepId": 3, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["C"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9, 'E': 11 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C' }, "visited": ["A", "B", "C"] }, "explanation": "Visit C (cost 9). Update cost for neighbor E to 9+2=11." },
+    { "stepId": 4, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["D"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9, 'E': 11, 'F': 18 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'D' }, "visited": ["A", "B", "C", "D"] }, "explanation": "Visit D (cost 9). Update cost for E (no change) and F to 9+9=18." },
+    { "stepId": 5, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["E"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9, 'E': 11, 'F': 18 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'D' }, "visited": ["A", "B", "C", "D", "E"] }, "explanation": "Visit E (cost 11). Update cost for F (no change)." },
+    { "stepId": 6, "type": "visit", "source": { "line": 12 }, "state": { "graph": weightedGraphForTrace, "highlights": { "nodes": ["F"] }, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9, 'E': 11, 'F': 18 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'D' }, "visited": ["A", "B", "C", "D", "E", "F"] }, "explanation": "Visit F (cost 18). No unvisited neighbors." },
+    { "stepId": 7, "type": "sorted", "source": { "line": 26 }, "state": { "graph": weightedGraphForTrace, "costs": { 'A': 0, 'B': 7, 'C': 9, 'D': 9, 'E': 11, 'F': 18 }, "parents": { 'B': 'A', 'C': 'A', 'D': 'B', 'E': 'C', 'F': 'D' }, "visited": ["A", "B", "C", "D", "E", "F"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "Algorithm finished. Shortest paths from A are found." }
+];
+
+const primsJsCode = `function prims(graph, startNode) {
+    const mst = new Set();
+    const visited = new Set([startNode]);
+    const edges = [];
+
+    // Add all edges from the start node
+    graph.edges.filter(e => e.from === startNode || e.to === startNode).forEach(e => edges.push(e));
+
+    while (edges.length > 0) {
+        // Find the edge with the minimum weight
+        edges.sort((a, b) => a.weight - b.weight);
+        const edge = edges.shift();
+
+        const nonVisitedNode = !visited.has(edge.from) ? edge.from : (!visited.has(edge.to) ? edge.to : null);
+
+        if (nonVisitedNode) {
+            visited.add(nonVisitedNode);
+            mst.add(edge);
+
+            // Add new edges from the newly visited node
+            graph.edges
+                .filter(e => (e.from === nonVisitedNode || e.to === nonVisitedNode))
+                .forEach(newEdge => {
+                    if (!visited.has(newEdge.from) || !visited.has(newEdge.to)) {
+                        edges.push(newEdge);
+                    }
+                });
+        }
+    }
+    return Array.from(mst);
+}`;
+
+const primsPyCode = `import heapq
+
+def prims(graph, start_node):
+    mst = set()
+    visited = {start_node}
+    edges = []
+    
+    # Create an adjacency list for easier lookup
+    adj = {node['id']: [] for node in graph['nodes']}
+    for edge in graph['edges']:
+        adj[edge['from']].append((edge['weight'], edge['from'], edge['to']))
+        adj[edge['to']].append((edge['weight'], edge['to'], edge['from']))
+
+    for weight, u, v in adj[start_node]:
+        heapq.heappush(edges, (weight, u, v))
+
+    while edges:
+        weight, u, v = heapq.heappop(edges)
+        
+        if v not in visited:
+            visited.add(v)
+            mst.add(tuple(sorted((u, v))))
+            
+            for next_weight, next_u, next_v in adj[v]:
+                if next_v not in visited:
+                    heapq.heappush(edges, (next_weight, next_u, next_v))
+    
+    return [{'from': u, 'to': v} for u, v in mst]`;
+
+const primsTrace: ExecutionStep[] = [
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "graph": weightedGraphForTrace, "visited": ["A"], "highlights": { "nodes": ["A"] } }, "explanation": "Start Prim's from A. Add A to visited set." },
+    { "stepId": 1, "type": "highlight", "source": { "line": 6 }, "state": { "graph": weightedGraphForTrace, "visited": ["A"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'A', to: 'D'}] } }, "explanation": "Consider all edges from A. Smallest is A-B (weight 7)." },
+    { "stepId": 2, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'B'}] } }, "explanation": "Add edge A-B to MST. Add B to visited set." },
+    { "stepId": 3, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}]} }, "explanation": "Add new edges from B to consideration. Smallest available is B-D (weight 2)." },
+    { "stepId": 4, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}] } }, "explanation": "Add edge B-D to MST. Add D to visited set." },
+    { "stepId": 5, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'D', to: 'F'}]} }, "explanation": "Add new edges from D. Smallest is A-C (weight 9) or D-F (weight 9)." },
+    { "stepId": 6, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}] } }, "explanation": "Choose A-C. Add edge A-C to MST. Add C to visited set." },
+    { "stepId": 7, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}] } }, "explanation": "Add edges from C. Smallest available is C-E (weight 2)." },
+    { "stepId": 8, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}] } }, "explanation": "Add edge C-E to MST. Add E to visited set." },
+    { "stepId": 9, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "Add edges from E. Smallest available is D-F (weight 9)." },
+    { "stepId": 10, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E", "F"], "highlights": { "nodes": ["F"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "Add edge D-F to MST. Add F to visited set." },
+    { "stepId": 11, "type": "sorted", "source": { "line": 29 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E", "F"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "All nodes visited. MST is complete." }
+];
+
 export const algorithms: Algorithm[] = [
   {
     id: 'bubble-sort',
@@ -775,6 +933,28 @@ export const algorithms: Algorithm[] = [
     },
     trace: dfsTrace,
   },
+    {
+    id: 'dijkstra',
+    name: 'Dijkstra\'s Algorithm',
+    description: 'An algorithm for finding the shortest paths between nodes in a weighted graph. It picks the unvisited node with the lowest distance, calculates the distance through it to each unvisited neighbor, and updates the neighbor\'s distance if smaller.',
+    category: 'shortest-path',
+    code: {
+        javascript: dijkstraJsCode,
+        python: dijkstraPyCode,
+    },
+    trace: dijkstraTrace,
+  },
+  {
+    id: 'prims',
+    name: 'Prim\'s Algorithm',
+    description: 'A greedy algorithm that finds a minimum spanning tree for a weighted undirected graph. It finds a subset of the edges that forms a tree that includes every vertex, where the total weight of all the edges in the tree is minimized.',
+    category: 'mst',
+    code: {
+        javascript: primsJsCode,
+        python: primsPyCode,
+    },
+    trace: primsTrace,
+  },
   {
     id: 'in-order-traversal',
     name: 'In-order Traversal',
@@ -813,6 +993,8 @@ export const algorithms: Algorithm[] = [
 export const algorithmCategories = [
   { id: 'sorting', name: 'Sorting' },
   { id: 'searching', name: 'Searching' },
-  { id: 'graph', name: 'Graph' },
-  { id: 'tree', name: 'Tree' },
+  { id: 'graph', name: 'Graph Traversal' },
+  { id: 'shortest-path', name: 'Shortest Path' },
+  { id: 'mst', name: 'Minimum Spanning Tree' },
+  { id: 'tree', name: 'Tree Traversal' },
 ];

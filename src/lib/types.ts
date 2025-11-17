@@ -1,4 +1,4 @@
-export type AlgorithmCategory = 'sorting' | 'searching' | 'graph' | 'tree';
+export type AlgorithmCategory = 'sorting' | 'searching' | 'graph' | 'tree' | 'shortest-path' | 'mst';
 
 export type Algorithm = {
   id: string;
@@ -22,6 +22,7 @@ export interface GraphNode {
 export interface GraphEdge {
   from: string;
   to: string;
+  weight?: number;
 }
 
 export interface TreeNode {
@@ -55,12 +56,14 @@ export interface VisualizerState {
   queue?: string[];
   stack?: string[];
   traversalOrder?: string[];
+  costs?: Record<string, number>;
+  parents?: Record<string, string | null>;
 }
 
 
 export type ExecutionStep = {
   stepId: number;
-  type: 'initial' | 'compare' | 'swap' | 'highlight' | 'sorted' | 'variable' | 'target-found' | 'visit';
+  type: 'initial' | 'compare' | 'swap' | 'highlight' | 'sorted' | 'variable' | 'target-found' | 'visit' | 'update-cost';
   source: {
     line: number;
   };
