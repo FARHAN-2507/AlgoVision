@@ -26,7 +26,7 @@ export interface VisualizerState {
 
 export type ExecutionStep = {
   stepId: number;
-  type: 'initial' | 'compare' | 'swap' | 'highlight' | 'sorted' | 'variable';
+  type: 'initial' | 'compare' | 'swap' | 'highlight' | 'sorted' | 'variable' | 'target-found';
   source: {
     line: number;
   };

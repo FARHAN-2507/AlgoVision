@@ -12,13 +12,13 @@ const BarChartVisualizer: React.FC<BarChartVisualizerProps> = ({ state }) => {
 
   const getColor = (index: number) => {
     if (sortedIndices.includes(index)) {
-      return 'bg-green-500';
+      return 'bg-green-500'; // Found or sorted
     }
     if (swaps.includes(index)) {
-      return 'bg-accent';
+      return 'bg-accent'; // Swapping
     }
     if (comparisons.includes(index)) {
-      return 'bg-yellow-500';
+      return 'bg-yellow-500'; // Comparing
     }
     return 'bg-primary';
   };

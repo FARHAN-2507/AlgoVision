@@ -21,8 +21,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ algorithm, executionStep }) => 
   const renderVisualizer = () => {
     switch (algorithm.category) {
       case 'sorting':
+      case 'searching':
         return <BarChartVisualizer state={executionStep.state} />;
-      // Add cases for other categories like 'searching', 'graph', 'tree'
+      // Add cases for other categories like 'graph', 'tree'
       default:
         return (
           <div className="w-full h-full flex items-center justify-center bg-muted/30 rounded-lg">

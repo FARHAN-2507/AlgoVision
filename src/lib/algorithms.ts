@@ -256,6 +256,73 @@ const mergeSortTrace: ExecutionStep[] = [
     { "stepId": 15, "type": "sorted", "source": { "line": 22 }, "state": { "array": [3, 27, 38, 43], "sortedIndices": [0, 1, 2, 3] }, "explanation": "The final merged array is sorted." }
 ];
 
+const linearSearchJsCode = `function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) {
+      return i;
+    }
+  }
+  return -1;
+}`;
+
+const linearSearchPyCode = `def linear_search(arr, target):
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1`;
+
+const linearSearchTrace: ExecutionStep[] = [
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "array": [2, 8, 5, 3, 9, 4], "variables": { "target": 9 } }, "explanation": "Initial array and target value. Start searching from the beginning." },
+    { "stepId": 1, "type": "compare", "source": { "line": 3 }, "state": { "array": [2, 8, 5, 3, 9, 4], "comparisons": [0, -1], "variables": { "target": 9 } }, "explanation": "Check index 0: 2 is not 9." },
+    { "stepId": 2, "type": "compare", "source": { "line": 3 }, "state": { "array": [2, 8, 5, 3, 9, 4], "comparisons": [1, -1], "variables": { "target": 9 } }, "explanation": "Check index 1: 8 is not 9." },
+    { "stepId": 3, "type": "compare", "source": { "line": 3 }, "state": { "array": [2, 8, 5, 3, 9, 4], "comparisons": [2, -1], "variables": { "target": 9 } }, "explanation": "Check index 2: 5 is not 9." },
+    { "stepId": 4, "type": "compare", "source": { "line": 3 }, "state": { "array": [2, 8, 5, 3, 9, 4], "comparisons": [3, -1], "variables": { "target": 9 } }, "explanation": "Check index 3: 3 is not 9." },
+    { "stepId": 5, "type": "compare", "source": { "line": 3 }, "state": { "array": [2, 8, 5, 3, 9, 4], "comparisons": [4, -1], "variables": { "target": 9 } }, "explanation": "Check index 4: 9 is equal to 9." },
+    { "stepId": 6, "type": "target-found", "source": { "line": 4 }, "state": { "array": [2, 8, 5, 3, 9, 4], "sortedIndices": [4], "variables": { "target": 9 } }, "explanation": "Target found at index 4. Algorithm terminates." }
+];
+
+const binarySearchJsCode = `function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return -1;
+}`;
+
+const binarySearchPyCode = `def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1`;
+
+const binarySearchTrace: ExecutionStep[] = [
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "variables": { "target": 23, "left": 0, "right": 9 } }, "explanation": "Initial sorted array and target. Set left and right pointers." },
+    { "stepId": 1, "type": "highlight", "source": { "line": 5 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "highlights": { "indices": [4] }, "variables": { "target": 23, "left": 0, "right": 9, "mid": 4 } }, "explanation": "Calculate middle index: mid = 4. Element is 16." },
+    { "stepId": 2, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "comparisons": [4, -1], "variables": { "target": 23, "left": 0, "right": 9, "mid": 4 } }, "explanation": "Compare middle element (16) with target (23)." },
+    { "stepId": 3, "type": "variable", "source": { "line": 9 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "variables": { "target": 23, "left": 5, "right": 9, "mid": 4 } }, "explanation": "16 < 23. Target is in the right half. Update left pointer to mid + 1." },
+    { "stepId": 4, "type": "highlight", "source": { "line": 5 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "highlights": { "indices": [7] }, "variables": { "target": 23, "left": 5, "right": 9, "mid": 7 } }, "explanation": "Recalculate middle index: mid = 7. Element is 56." },
+    { "stepId": 5, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "comparisons": [7, -1], "variables": { "target": 23, "left": 5, "right": 9, "mid": 7 } }, "explanation": "Compare middle element (56) with target (23)." },
+    { "stepId": 6, "type": "variable", "source": { "line": 11 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "variables": { "target": 23, "left": 5, "right": 6, "mid": 7 } }, "explanation": "56 > 23. Target is in the left half. Update right pointer to mid - 1." },
+    { "stepId": 7, "type": "highlight", "source": { "line": 5 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "highlights": { "indices": [5] }, "variables": { "target": 23, "left": 5, "right": 6, "mid": 5 } }, "explanation": "Recalculate middle index: mid = 5. Element is 23." },
+    { "stepId": 8, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "comparisons": [5, -1], "variables": { "target": 23, "left": 5, "right": 6, "mid": 5 } }, "explanation": "Compare middle element (23) with target (23)." },
+    { "stepId": 9, "type": "target-found", "source": { "line": 7 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "sortedIndices": [5], "variables": { "target": 23, "left": 5, "right": 6, "mid": 5 } }, "explanation": "Target found at index 5. Algorithm terminates." }
+];
+
+
 export const algorithms: Algorithm[] = [
   {
     id: 'bubble-sort',
@@ -311,6 +378,28 @@ export const algorithms: Algorithm[] = [
         python: mergeSortPyCode,
     },
     trace: mergeSortTrace,
+  },
+  {
+    id: 'linear-search',
+    name: 'Linear Search',
+    description: 'A simple searching algorithm that sequentially checks each element of the list until a match is found or the whole list has been searched.',
+    category: 'searching',
+    code: {
+      javascript: linearSearchJsCode,
+      python: linearSearchPyCode,
+    },
+    trace: linearSearchTrace,
+  },
+  {
+    id: 'binary-search',
+    name: 'Binary Search',
+    description: 'An efficient algorithm for finding an item from a sorted list of items. It works by repeatedly dividing in half the portion of the list that could contain the item, until you\'ve narrowed down the possible locations to just one.',
+    category: 'searching',
+    code: {
+      javascript: binarySearchJsCode,
+      python: binarySearchPyCode,
+    },
+    trace: binarySearchTrace,
   }
 ];
 
