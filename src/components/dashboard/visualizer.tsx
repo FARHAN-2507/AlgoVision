@@ -1,7 +1,8 @@
 import React from 'react';
 import { Algorithm, ExecutionStep } from '@/lib/types';
 import BarChartVisualizer from './bar-chart-visualizer';
-import { BarChart2 } from 'lucide-react';
+import GraphVisualizer from './graph-visualizer';
+import { BarChart2, Share2 } from 'lucide-react';
 
 interface VisualizerProps {
   algorithm: Algorithm | null;
@@ -23,7 +24,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ algorithm, executionStep }) => 
       case 'sorting':
       case 'searching':
         return <BarChartVisualizer state={executionStep.state} />;
-      // Add cases for other categories like 'graph', 'tree'
+      case 'graph':
+        return <GraphVisualizer state={executionStep.state} />;
+      // Add cases for other categories like 'tree'
       default:
         return (
           <div className="w-full h-full flex items-center justify-center bg-muted/30 rounded-lg">

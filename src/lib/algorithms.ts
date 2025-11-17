@@ -322,6 +322,121 @@ const binarySearchTrace: ExecutionStep[] = [
     { "stepId": 9, "type": "target-found", "source": { "line": 7 }, "state": { "array": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91], "sortedIndices": [5], "variables": { "target": 23, "left": 5, "right": 6, "mid": 5 } }, "explanation": "Target found at index 5. Algorithm terminates." }
 ];
 
+const bfsJsCode = `function bfs(graph, startNode) {
+  let visited = new Set();
+  let queue = [startNode];
+  visited.add(startNode);
+  
+  while (queue.length > 0) {
+    const currentNode = queue.shift();
+    
+    const neighbors = graph.get(currentNode) || [];
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return Array.from(visited);
+}`;
+
+const bfsPyCode = `from collections import deque
+
+def bfs(graph, start_node):
+    visited = set()
+    queue = deque([start_node])
+    visited.add(start_node)
+    
+    while queue:
+        current_node = queue.popleft()
+        
+        for neighbor in graph.get(current_node, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return list(visited)`;
+
+const graphForTrace = {
+  nodes: [
+    { id: 'A', label: 'A', x: 50, y: 150 },
+    { id: 'B', label: 'B', x: 150, y: 50 },
+    { id: 'C', label: 'C', x: 150, y: 250 },
+    { id: 'D', label: 'D', x: 250, y: 50 },
+    { id: 'E', label: 'E', x: 250, y: 250 },
+  ],
+  edges: [
+    { from: 'A', to: 'B' },
+    { from: 'A', to: 'C' },
+    { from: 'B', to: 'D' },
+    { from: 'C', to: 'E' },
+  ],
+};
+
+const bfsTrace: ExecutionStep[] = [
+  { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], queue: ['A'] }, "explanation": "Start BFS from node A. Add A to the queue and mark as visited." },
+  { "stepId": 1, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A'], queue: [], highlights: { nodes: ['A'] } }, "explanation": "Dequeue A and process its neighbors." },
+  { "stepId": 2, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A'], queue: [], highlights: { nodes: ['B', 'C'], edges: [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}] } }, "explanation": "Neighbors of A are B and C. They have not been visited." },
+  { "stepId": 3, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['B', 'C'] }, "explanation": "Add B and C to the queue and mark them as visited." },
+  { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['C'], highlights: { nodes: ['B'] } }, "explanation": "Dequeue B and process its neighbors." },
+  { "stepId": 5, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['C'], highlights: { nodes: ['D'], edges: [{from: 'B', to: 'D'}] } }, "explanation": "Neighbor of B is D. It has not been visited." },
+  { "stepId": 6, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['C', 'D'] }, "explanation": "Add D to the queue and mark as visited." },
+  { "stepId": 7, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['D'], highlights: { nodes: ['C'] } }, "explanation": "Dequeue C and process its neighbors." },
+  { "stepId": 8, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['D'], highlights: { nodes: ['E'], edges: [{from: 'C', to: 'E'}] } }, "explanation": "Neighbor of C is E. It has not been visited." },
+  { "stepId": 9, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: ['D', 'E'] }, "explanation": "Add E to the queue and mark as visited." },
+  { "stepId": 10, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: ['E'], highlights: { nodes: ['D'] } }, "explanation": "Dequeue D. It has no unvisited neighbors." },
+  { "stepId": 11, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: [], highlights: { nodes: ['E'] } }, "explanation": "Dequeue E. It has no unvisited neighbors." },
+  { "stepId": 12, "type": "sorted", "source": { "line": 15 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: [] }, "explanation": "Queue is empty. BFS traversal is complete. Order: A, B, C, D, E." }
+];
+
+const dfsJsCode = `function dfs(graph, startNode) {
+  let visited = new Set();
+  let stack = [startNode];
+  
+  while (stack.length > 0) {
+    const currentNode = stack.pop();
+    
+    if (!visited.has(currentNode)) {
+      visited.add(currentNode);
+      
+      const neighbors = graph.get(currentNode) || [];
+      // Add neighbors to the stack in reverse order to visit them in order
+      for (let i = neighbors.length - 1; i >= 0; i--) {
+        const neighbor = neighbors[i];
+        if (!visited.has(neighbor)) {
+          stack.push(neighbor);
+        }
+      }
+    }
+  }
+  return Array.from(visited);
+}`;
+
+const dfsPyCode = `def dfs(graph, start_node):
+    visited = set()
+    stack = [start_node]
+    
+    while stack:
+        current_node = stack.pop()
+        
+        if current_node not in visited:
+            visited.add(current_node)
+            
+            # Add neighbors in reverse order to explore them alphabetically
+            for neighbor in reversed(graph.get(current_node, [])):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+    return list(visited)`;
+
+const dfsTrace: ExecutionStep[] = [
+  { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], stack: ['A'] }, "explanation": "Start DFS from node A. Push A onto the stack." },
+  { "stepId": 1, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A'], stack: ['C', 'B'], highlights: { nodes: ['A'] } }, "explanation": "Pop A, mark as visited. Push its neighbors C, then B to the stack (so B is on top)." },
+  { "stepId": 2, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B'], stack: ['C', 'D'], highlights: { nodes: ['B'] } }, "explanation": "Pop B, mark as visited. Push its neighbor D to the stack." },
+  { "stepId": 3, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D'], stack: ['C'], highlights: { nodes: ['D'] } }, "explanation": "Pop D, mark as visited. D has no unvisited neighbors." },
+  { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C'], stack: ['E'], highlights: { nodes: ['C'] } }, "explanation": "Pop C, mark as visited. Push its neighbor E to the stack." },
+  { "stepId": 5, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], stack: [], highlights: { nodes: ['E'] } }, "explanation": "Pop E, mark as visited. E has no unvisited neighbors." },
+  { "stepId": 6, "type": "sorted", "source": { "line": 21 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], stack: [] }, "explanation": "Stack is empty. DFS traversal is complete. Order: A, B, D, C, E." }
+];
 
 export const algorithms: Algorithm[] = [
   {
@@ -400,6 +515,28 @@ export const algorithms: Algorithm[] = [
       python: binarySearchPyCode,
     },
     trace: binarySearchTrace,
+  },
+  {
+    id: 'bfs',
+    name: 'Breadth-First Search',
+    description: 'A graph traversal algorithm that explores neighbors first before moving to the next level of neighbors. It uses a queue.',
+    category: 'graph',
+    code: {
+      javascript: bfsJsCode,
+      python: bfsPyCode,
+    },
+    trace: bfsTrace,
+  },
+  {
+    id: 'dfs',
+    name: 'Depth-First Search',
+    description: 'A graph traversal algorithm that explores as far as possible along each branch before backtracking. It uses a stack.',
+    category: 'graph',
+    code: {
+      javascript: dfsJsCode,
+      python: dfsPyCode,
+    },
+    trace: dfsTrace,
   }
 ];
 
