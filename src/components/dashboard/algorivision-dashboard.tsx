@@ -22,6 +22,120 @@ import ControlsPanel from './controls-panel';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
 
+const generateLinearSearchTrace = (array: number[], target: number): ExecutionStep[] => {
+  const trace: ExecutionStep[] = [];
+  trace.push({
+    stepId: 0,
+    type: 'initial',
+    source: { line: 1 },
+    state: { array, variables: { target } },
+    explanation: `Initial array and target value. Start searching for ${target}.`,
+  });
+
+  for (let i = 0; i < array.length; i++) {
+    trace.push({
+      stepId: trace.length,
+      type: 'compare',
+      source: { line: 3 },
+      state: { array, comparisons: [i, -1], variables: { target } },
+      explanation: `Check index ${i}: is ${array[i]} equal to ${target}?`,
+    });
+    if (array[i] === target) {
+      trace.push({
+        stepId: trace.length,
+        type: 'target-found',
+        source: { line: 4 },
+        state: { array, sortedIndices: [i], variables: { target } },
+        explanation: `Target ${target} found at index ${i}.`,
+      });
+      return trace;
+    }
+  }
+
+  trace.push({
+    stepId: trace.length,
+    type: 'sorted', // Using 'sorted' type for not found message
+    source: { line: 7 },
+    state: { array, variables: { target } },
+    explanation: `Target ${target} not found in the array.`,
+  });
+  return trace;
+};
+
+const generateBinarySearchTrace = (array: number[], target: number): ExecutionStep[] => {
+  const trace: ExecutionStep[] = [];
+  let left = 0;
+  let right = array.length - 1;
+
+  trace.push({
+    stepId: 0,
+    type: 'initial',
+    source: { line: 1 },
+    state: { array, variables: { target, left, right } },
+    explanation: `Initial sorted array and target. Searching for ${target}.`,
+  });
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    trace.push({
+      stepId: trace.length,
+      type: 'highlight',
+      source: { line: 5 },
+      state: { array, highlights: { indices: [mid] }, variables: { target, left, right, mid } },
+      explanation: `Calculate middle index: mid = ${mid}. Element is ${array[mid]}.`,
+    });
+
+    trace.push({
+      stepId: trace.length,
+      type: 'compare',
+      source: { line: 6 },
+      state: { array, comparisons: [mid, -1], highlights: { indices: [mid] }, variables: { target, left, right, mid } },
+      explanation: `Compare middle element (${array[mid]}) with target (${target}).`,
+    });
+
+    if (array[mid] === target) {
+      trace.push({
+        stepId: trace.length,
+        type: 'target-found',
+        source: { line: 7 },
+        state: { array, sortedIndices: [mid], variables: { target, left, right, mid } },
+        explanation: `Target ${target} found at index ${mid}.`,
+      });
+      return trace;
+    } else if (array[mid] < target) {
+       trace.push({
+        stepId: trace.length,
+        type: 'variable',
+        source: { line: 9 },
+        state: { array, highlights: { indices: [mid] }, variables: { target, left, right, mid } },
+        explanation: `${array[mid]} < ${target}. Target must be in the right half. Update left pointer.`,
+      });
+      left = mid + 1;
+    } else {
+       trace.push({
+        stepId: trace.length,
+        type: 'variable',
+        source: { line: 11 },
+        state: { array, highlights: { indices: [mid] }, variables: { target, left, right, mid } },
+        explanation: `${array[mid]} > ${target}. Target must be in the left half. Update right pointer.`,
+      });
+      right = mid - 1;
+    }
+    trace[trace.length - 1].state.variables = { ...trace[trace.length - 1].state.variables, left, right };
+
+  }
+
+  trace.push({
+    stepId: trace.length,
+    type: 'sorted', // Using 'sorted' type for not found message
+    source: { line: 14 },
+    state: { array, variables: { target } },
+    explanation: `Target ${target} not found in the array.`,
+  });
+  return trace;
+};
+
+
 export function AlgoVisionDashboard() {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>(algorithmCategories[0].id);
@@ -64,7 +178,20 @@ export function AlgoVisionDashboard() {
   useEffect(() => {
     if (selectedAlgorithm) {
       setCode(selectedAlgorithm.code[language]);
-      setTrace(selectedAlgorithm.trace);
+
+      if (selectedAlgorithm.category === 'searching') {
+        const initialTarget = selectedAlgorithm.trace[0]?.state.variables?.target;
+        setTargetNode(initialTarget !== undefined ? String(initialTarget) : '1');
+        const initialArray = selectedAlgorithm.trace[0]?.state.array || [];
+        const newTrace = selectedAlgorithm.id === 'linear-search'
+          ? generateLinearSearchTrace(initialArray, Number(initialTarget))
+          : generateBinarySearchTrace(initialArray, Number(initialTarget));
+        setTrace(newTrace);
+      } else {
+        setTrace(selectedAlgorithm.trace);
+        setTargetNode('');
+      }
+
       setCurrentStep(0);
       setIsPlaying(false);
       
@@ -74,13 +201,6 @@ export function AlgoVisionDashboard() {
         setStartNode(undefined);
       }
 
-      if (selectedAlgorithm.category === 'searching') {
-        const target = selectedAlgorithm.trace[0]?.state.variables?.target;
-        setTargetNode(target !== undefined ? String(target) : '');
-      } else {
-        setTargetNode('');
-      }
-
     } else {
       setCode('');
       setTrace([]);
@@ -88,6 +208,28 @@ export function AlgoVisionDashboard() {
       setTargetNode('');
     }
   }, [selectedAlgorithm, language, graphNodes]);
+
+  // Effect for dynamic search algorithm trace generation
+  useEffect(() => {
+    if (selectedAlgorithm?.category === 'searching') {
+      const array = selectedAlgorithm.trace[0].state.array || [];
+      const target = Number(targetNode);
+      if (!isNaN(target)) {
+        let newTrace;
+        if (selectedAlgorithm.id === 'linear-search') {
+          newTrace = generateLinearSearchTrace(array, target);
+        } else if (selectedAlgorithm.id === 'binary-search') {
+          newTrace = generateBinarySearchTrace(array, target);
+        }
+        if (newTrace) {
+          setTrace(newTrace);
+          setCurrentStep(0);
+          setIsPlaying(false);
+        }
+      }
+    }
+  }, [targetNode, selectedAlgorithm]);
+
 
   const handleAlgorithmChange = (algoId: string) => {
     const algorithm = algorithms.find(a => a.id === algoId);
@@ -193,6 +335,7 @@ export function AlgoVisionDashboard() {
                         value={targetNode}
                         onChange={(e) => setTargetNode(e.target.value)}
                         placeholder="Enter a number"
+                        type="number"
                     />
                 </div>
             )}
