@@ -12,6 +12,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
 import { Save } from "lucide-react";
 import { algorithmCategories, algorithms } from '@/lib/algorithms';
 import type { Algorithm, ExecutionStep, Language } from '@/lib/types';
@@ -34,6 +35,7 @@ export function AlgoVisionDashboard() {
   const [speed, setSpeed] = useState(50); // From 1 to 100
 
   const [startNode, setStartNode] = useState<string | undefined>(undefined);
+  const [targetNode, setTargetNode] = useState<string>('');
 
   const availableAlgorithms = useMemo(() => {
     return algorithms.filter(algo => algo.category === selectedCategory);
@@ -53,6 +55,7 @@ export function AlgoVisionDashboard() {
     } else {
       setSelectedAlgorithm(null);
       setStartNode(undefined);
+      setTargetNode('');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, availableAlgorithms]);
@@ -70,10 +73,19 @@ export function AlgoVisionDashboard() {
       } else {
         setStartNode(undefined);
       }
+
+      if (selectedAlgorithm.category === 'searching') {
+        const target = selectedAlgorithm.trace[0]?.state.variables?.target;
+        setTargetNode(target !== undefined ? String(target) : '');
+      } else {
+        setTargetNode('');
+      }
+
     } else {
       setCode('');
       setTrace([]);
       setStartNode(undefined);
+      setTargetNode('');
     }
   }, [selectedAlgorithm, language, graphNodes]);
 
@@ -173,6 +185,18 @@ export function AlgoVisionDashboard() {
                 </Select>
               </div>
             )}
+
+            {selectedAlgorithm?.category === 'searching' && (
+                <div>
+                    <Label>Node to Find</Label>
+                    <Input 
+                        value={targetNode}
+                        onChange={(e) => setTargetNode(e.target.value)}
+                        placeholder="Enter a number"
+                    />
+                </div>
+            )}
+
 
           </CardContent>
         </Card>
