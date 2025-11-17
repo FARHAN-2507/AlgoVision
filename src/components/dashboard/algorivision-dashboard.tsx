@@ -42,6 +42,7 @@ export function AlgoVisionDashboard() {
     } else {
       setSelectedAlgorithm(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableAlgorithms]);
 
   useEffect(() => {
@@ -165,11 +166,11 @@ export function AlgoVisionDashboard() {
 
       {/* Center Panel */}
       <div className="lg:col-span-6 flex flex-col h-full">
-        <Card className="flex-1">
+        <Card className="flex-1 flex flex-col">
           <CardHeader>
             <CardTitle className="font-headline text-lg">Visualization</CardTitle>
           </CardHeader>
-          <CardContent className="h-[calc(100%-4rem)]">
+          <CardContent className="flex-grow min-h-[300px]">
             <Visualizer
               algorithm={selectedAlgorithm}
               executionStep={currentExecutionStep}
