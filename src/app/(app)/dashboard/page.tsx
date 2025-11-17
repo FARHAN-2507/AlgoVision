@@ -2,7 +2,7 @@ import { AlgoVisionDashboard } from "@/components/dashboard/algorivision-dashboa
 
 export default function DashboardPage() {
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden">
+    <div>
       <AlgoVisionDashboard />
     </div>
   );
