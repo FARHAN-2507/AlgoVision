@@ -416,34 +416,51 @@ def bfs(graph, start_node):
 
 const graphForTrace = {
   nodes: [
-    { id: 'A', label: 'A', x: 50, y: 150 },
+    { id: 'A', label: 'A', x: 50, y: 50 },
     { id: 'B', label: 'B', x: 150, y: 50 },
-    { id: 'C', label: 'C', x: 150, y: 250 },
-    { id: 'D', label: 'D', x: 250, y: 50 },
-    { id: 'E', label: 'E', x: 250, y: 250 },
+    { id: 'C', label: 'C', x: 250, y: 50 },
+    { id: 'D', label: 'D', x: 50, y: 125 },
+    { id: 'E', label: 'E', x: 150, y: 125 },
+    { id: 'F', label: 'F', x: 250, y: 125 },
+    { id: 'G', label: 'G', x: 50, y: 200 },
+    { id: 'H', label: 'H', x: 150, y: 200 },
+    { id: 'I', label: 'I', x: 250, y: 200 },
+    { id: 'J', label: 'J', x: 150, y: 275 },
   ],
   edges: [
-    { from: 'A', to: 'B' },
-    { from: 'A', to: 'C' },
-    { from: 'B', to: 'D' },
-    { from: 'C', to: 'E' },
+    { from: 'A', to: 'B' }, { from: 'A', to: 'D' },
+    { from: 'B', to: 'C' }, { from: 'B', to: 'E' },
+    { from: 'C', to: 'F' },
+    { from: 'D', to: 'E' }, { from: 'D', to: 'G' },
+    { from: 'E', to: 'F' }, { from: 'E', to: 'H' },
+    { from: 'F', to: 'I' },
+    { from: 'G', to: 'H' },
+    { from: 'H', to: 'I' }, { from: 'H', to: 'J' },
+    { from: 'I', to: 'J' },
   ],
 };
 
 const bfsTrace: ExecutionStep[] = [
-  { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], queue: ['A'] }, "explanation": "Start BFS from node A. Add A to the queue and mark as visited." },
-  { "stepId": 1, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A'], queue: [], highlights: { nodes: ['A'] } }, "explanation": "Dequeue A and process its neighbors." },
-  { "stepId": 2, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A'], queue: [], highlights: { nodes: ['B', 'C'], edges: [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}] } }, "explanation": "Neighbors of A are B and C. They have not been visited." },
-  { "stepId": 3, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['B', 'C'] }, "explanation": "Add B and C to the queue and mark them as visited." },
-  { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['C'], highlights: { nodes: ['B'] } }, "explanation": "Dequeue B and process its neighbors." },
-  { "stepId": 5, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], queue: ['C'], highlights: { nodes: ['D'], edges: [{from: 'B', to: 'D'}] } }, "explanation": "Neighbor of B is D. It has not been visited." },
-  { "stepId": 6, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['C', 'D'] }, "explanation": "Add D to the queue and mark as visited." },
-  { "stepId": 7, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['D'], highlights: { nodes: ['C'] } }, "explanation": "Dequeue C and process its neighbors." },
-  { "stepId": 8, "type": "highlight", "source": { "line": 9 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D'], queue: ['D'], highlights: { nodes: ['E'], edges: [{from: 'C', to: 'E'}] } }, "explanation": "Neighbor of C is E. It has not been visited." },
-  { "stepId": 9, "type": "variable", "source": { "line": 12 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: ['D', 'E'] }, "explanation": "Add E to the queue and mark as visited." },
-  { "stepId": 10, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: ['E'], highlights: { nodes: ['D'] } }, "explanation": "Dequeue D. It has no unvisited neighbors." },
-  { "stepId": 11, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: [], highlights: { nodes: ['E'] } }, "explanation": "Dequeue E. It has no unvisited neighbors." },
-  { "stepId": 12, "type": "sorted", "source": { "line": 15 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'D', 'E'], queue: [] }, "explanation": "Queue is empty. BFS traversal is complete. Order: A, B, C, D, E." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], queue: ['A'] }, "explanation": "Start BFS from node A. Add A to queue and visited." },
+    { "stepId": 1, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A'], queue: [], highlights: { nodes: ['A'] } }, "explanation": "Dequeue A. Explore its neighbors." },
+    { "stepId": 2, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D'], queue: ['B', 'D'], highlights: { nodes: ['B', 'D'], edges: [{from: 'A', to: 'B'}, {from: 'A', to: 'D'}] } }, "explanation": "Enqueue and visit unvisited neighbors of A: B, D." },
+    { "stepId": 3, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D'], queue: ['D'], highlights: { nodes: ['B'] } }, "explanation": "Dequeue B. Explore its neighbors." },
+    { "stepId": 4, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], queue: ['D', 'C', 'E'], highlights: { nodes: ['C', 'E'], edges: [{from: 'B', to: 'C'}, {from: 'B', to: 'E'}] } }, "explanation": "Enqueue and visit unvisited neighbors of B: C, E." },
+    { "stepId": 5, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], queue: ['C', 'E'], highlights: { nodes: ['D'] } }, "explanation": "Dequeue D. Explore its neighbors." },
+    { "stepId": 6, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G'], queue: ['C', 'E', 'G'], highlights: { nodes: ['G'], edges: [{from: 'D', to: 'G'}] } }, "explanation": "Enqueue and visit unvisited neighbor of D: G. (E is already visited)." },
+    { "stepId": 7, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G'], queue: ['E', 'G'], highlights: { nodes: ['C'] } }, "explanation": "Dequeue C. Explore its neighbors." },
+    { "stepId": 8, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F'], queue: ['E', 'G', 'F'], highlights: { nodes: ['F'], edges: [{from: 'C', to: 'F'}] } }, "explanation": "Enqueue and visit unvisited neighbor of C: F." },
+    { "stepId": 9, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F'], queue: ['G', 'F'], highlights: { nodes: ['E'] } }, "explanation": "Dequeue E. Explore its neighbors." },
+    { "stepId": 10, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H'], queue: ['G', 'F', 'H'], highlights: { nodes: ['H'], edges: [{from: 'E', to: 'H'}] } }, "explanation": "Enqueue and visit unvisited neighbor of E: H. (F is already visited)." },
+    { "stepId": 11, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H'], queue: ['F', 'H'], highlights: { nodes: ['G'] } }, "explanation": "Dequeue G. Explore its neighbors." },
+    { "stepId": 12, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H'], queue: ['F', 'H'], highlights: { nodes: [] } }, "explanation": "Neighbor H of G is already visited." },
+    { "stepId": 13, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H'], queue: ['H'], highlights: { nodes: ['F'] } }, "explanation": "Dequeue F. Explore its neighbors." },
+    { "stepId": 14, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I'], queue: ['H', 'I'], highlights: { nodes: ['I'], edges: [{from: 'F', to: 'I'}] } }, "explanation": "Enqueue and visit unvisited neighbor of F: I." },
+    { "stepId": 15, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I'], queue: ['I'], highlights: { nodes: ['H'] } }, "explanation": "Dequeue H. Explore its neighbors." },
+    { "stepId": 16, "type": "highlight", "source": { "line": 10 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I', 'J'], queue: ['I', 'J'], highlights: { nodes: ['J'], edges: [{from: 'H', to: 'J'}] } }, "explanation": "Enqueue and visit unvisited neighbor of H: J. (I is already visited)." },
+    { "stepId": 17, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I', 'J'], queue: ['J'], highlights: { nodes: ['I'] } }, "explanation": "Dequeue I. All neighbors are visited." },
+    { "stepId": 18, "type": "visit", "source": { "line": 7 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I', 'J'], queue: [], highlights: { nodes: ['J'] } }, "explanation": "Dequeue J. All neighbors are visited." },
+    { "stepId": 19, "type": "sorted", "source": { "line": 15 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E', 'G', 'F', 'H', 'I', 'J'], queue: [] }, "explanation": "Queue is empty. BFS is complete." }
 ];
 
 const dfsJsCode = `function dfs(graph, startNode) {
@@ -486,13 +503,18 @@ const dfsPyCode = `def dfs(graph, start_node):
     return list(visited)`;
 
 const dfsTrace: ExecutionStep[] = [
-  { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], stack: ['A'] }, "explanation": "Start DFS from node A. Push A onto the stack." },
-  { "stepId": 1, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A'], stack: ['C', 'B'], highlights: { nodes: ['A'] } }, "explanation": "Pop A, mark as visited. Push its neighbors C, then B to the stack (so B is on top)." },
-  { "stepId": 2, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B'], stack: ['C', 'D'], highlights: { nodes: ['B'] } }, "explanation": "Pop B, mark as visited. Push its neighbor D to the stack." },
-  { "stepId": 3, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D'], stack: ['C'], highlights: { nodes: ['D'] } }, "explanation": "Pop D, mark as visited. D has no unvisited neighbors." },
-  { "stepId": 4, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C'], stack: ['E'], highlights: { nodes: ['C'] } }, "explanation": "Pop C, mark as visited. Push its neighbor E to the stack." },
-  { "stepId": 5, "type": "visit", "source": { "line": 6 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], stack: [], highlights: { nodes: ['E'] } }, "explanation": "Pop E, mark as visited. E has no unvisited neighbors." },
-  { "stepId": 6, "type": "sorted", "source": { "line": 21 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'D', 'C', 'E'], stack: [] }, "explanation": "Stack is empty. DFS traversal is complete. Order: A, B, D, C, E." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { graph: graphForTrace, visited: [], stack: ['A'] }, "explanation": "Start DFS from node A. Push A onto the stack." },
+    { "stepId": 1, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A'], stack: ['D', 'B'], highlights: { nodes: ['A'] } }, "explanation": "Pop A, mark as visited. Push its neighbors D then B to the stack." },
+    { "stepId": 2, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B'], stack: ['D', 'E', 'C'], highlights: { nodes: ['B'] } }, "explanation": "Pop B, mark as visited. Push its neighbors E then C." },
+    { "stepId": 3, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C'], stack: ['D', 'E', 'F'], highlights: { nodes: ['C'] } }, "explanation": "Pop C, mark as visited. Push its neighbor F." },
+    { "stepId": 4, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F'], stack: ['D', 'E', 'I'], highlights: { nodes: ['F'] } }, "explanation": "Pop F, mark as visited. Push its neighbor I." },
+    { "stepId": 5, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I'], stack: ['D', 'E', 'J'], highlights: { nodes: ['I'] } }, "explanation": "Pop I, mark as visited. Push its neighbor J." },
+    { "stepId": 6, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J'], stack: ['D', 'E', 'H'], highlights: { nodes: ['J'] } }, "explanation": "Pop J, mark as visited. H is already on stack from E. No new neighbors to push." },
+    { "stepId": 7, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J', 'E'], stack: ['D', 'H'], highlights: { nodes: ['E'] } }, "explanation": "Pop E, mark as visited. Push neighbor H. F is visited." },
+    { "stepId": 8, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J', 'E', 'H'], stack: ['D', 'G'], highlights: { nodes: ['H'] } }, "explanation": "Pop H, mark as visited. I and J are visited. G is unvisited so push G." },
+    { "stepId": 9, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J', 'E', 'H', 'G'], stack: ['D'], highlights: { nodes: ['G'] } }, "explanation": "Pop G, mark as visited. H is visited." },
+    { "stepId": 10, "type": "visit", "source": { "line": 5 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J', 'E', 'H', 'G', 'D'], stack: [], highlights: { nodes: ['D'] } }, "explanation": "Pop D, mark as visited. B, E, G are all visited." },
+    { "stepId": 11, "type": "sorted", "source": { "line": 21 }, "state": { graph: graphForTrace, visited: ['A', 'B', 'C', 'F', 'I', 'J', 'E', 'H', 'G', 'D'], stack: [] }, "explanation": "Stack is empty. DFS traversal is complete." }
 ];
 
 
