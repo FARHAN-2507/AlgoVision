@@ -19,6 +19,7 @@ import Visualizer from './visualizer';
 import ControlsPanel from './controls-panel';
 import { useToast } from '@/hooks/use-toast';
 import { sleep } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 export function AlgoVisionDashboard() {
   const { toast } = useToast();
@@ -32,18 +33,29 @@ export function AlgoVisionDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(50); // From 1 to 100
 
+  const [startNode, setStartNode] = useState<string | undefined>(undefined);
+
   const availableAlgorithms = useMemo(() => {
     return algorithms.filter(algo => algo.category === selectedCategory);
   }, [selectedCategory]);
+
+  const graphNodes = useMemo(() => {
+    if (selectedAlgorithm?.category === 'graph' && selectedAlgorithm.trace[0]?.state.graph?.nodes) {
+      return selectedAlgorithm.trace[0].state.graph.nodes;
+    }
+    return [];
+  }, [selectedAlgorithm]);
+
 
   useEffect(() => {
     if (availableAlgorithms.length > 0) {
       handleAlgorithmChange(availableAlgorithms[0].id);
     } else {
       setSelectedAlgorithm(null);
+      setStartNode(undefined);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableAlgorithms]);
+  }, [selectedCategory]);
 
   useEffect(() => {
     if (selectedAlgorithm) {
@@ -51,11 +63,19 @@ export function AlgoVisionDashboard() {
       setTrace(selectedAlgorithm.trace);
       setCurrentStep(0);
       setIsPlaying(false);
+      
+      if (selectedAlgorithm.category === 'graph' && graphNodes.length > 0) {
+        setStartNode(graphNodes[0].id);
+      } else {
+        setStartNode(undefined);
+      }
+
     } else {
       setCode('');
       setTrace([]);
+      setStartNode(undefined);
     }
-  }, [selectedAlgorithm, language]);
+  }, [selectedAlgorithm, language, graphNodes]);
 
   const handleAlgorithmChange = (algoId: string) => {
     const algorithm = algorithms.find(a => a.id === algoId);
@@ -112,7 +132,7 @@ export function AlgoVisionDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Category</label>
+              <Label>Category</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
@@ -125,7 +145,7 @@ export function AlgoVisionDashboard() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Algorithm</label>
+              <Label>Algorithm</Label>
               <Select value={selectedAlgorithm?.id} onValueChange={handleAlgorithmChange} disabled={!availableAlgorithms.length}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select an algorithm" />
@@ -137,6 +157,23 @@ export function AlgoVisionDashboard() {
                 </SelectContent>
               </Select>
             </div>
+
+            {selectedAlgorithm?.category === 'graph' && graphNodes.length > 0 && (
+              <div>
+                <Label>Start Node</Label>
+                <Select value={startNode} onValueChange={setStartNode}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select start node" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {graphNodes.map(node => (
+                      <SelectItem key={node.id} value={node.id}>{node.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
           </CardContent>
         </Card>
         
@@ -170,7 +207,7 @@ export function AlgoVisionDashboard() {
           <CardHeader>
             <CardTitle className="font-headline text-lg">Visualization</CardTitle>
           </CardHeader>
-          <CardContent className="flex-grow min-h-[300px]">
+          <CardContent className="flex-grow min-h-[400px]">
             <Visualizer
               algorithm={selectedAlgorithm}
               executionStep={currentExecutionStep}

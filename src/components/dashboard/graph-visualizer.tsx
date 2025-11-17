@@ -1,5 +1,5 @@
 import React from 'react';
-import { VisualizerState, GraphNode } from '@/lib/types';
+import { VisualizerState } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 interface GraphVisualizerProps {
@@ -17,23 +17,50 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
 
   const getNodeColor = (nodeId: string) => {
     if (highlights?.nodes?.includes(nodeId)) {
-      return 'bg-yellow-500 border-yellow-400';
+      return {
+        fill: 'hsl(var(--accent))',
+        stroke: 'hsl(var(--accent-foreground))',
+        text: 'hsl(var(--accent-foreground))',
+      };
     }
     if (visited.includes(nodeId)) {
-      return 'bg-green-500 border-green-400';
+      return {
+        fill: 'hsl(var(--primary))',
+        stroke: 'hsl(var(--primary-foreground))',
+        text: 'hsl(var(--primary-foreground))',
+      };
     }
-    return 'bg-primary border-primary/50';
+    return {
+      fill: 'hsl(var(--muted))',
+      stroke: 'hsl(var(--muted-foreground))',
+      text: 'hsl(var(--muted-foreground))',
+    };
   };
 
   const getEdgeColor = (edge: { from: string; to: string }) => {
-    if (highlights?.edges?.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from))) {
-        return 'stroke-yellow-400';
+    const isHighlighted = highlights?.edges?.some(
+      (e) => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
+    );
+
+    if (isHighlighted) {
+      return 'hsl(var(--accent))';
     }
-    if (visited.includes(edge.from) && visited.includes(edge.to)) {
-        return 'stroke-green-400';
+    
+    // Check if both nodes of the edge have been visited
+    // and the edge is part of the traversal path
+    const fromIndex = visited.indexOf(edge.from);
+    const toIndex = visited.indexOf(edge.to);
+    
+    if (fromIndex > -1 && toIndex > -1) {
+        // A simple check to see if they are adjacent in the visited array
+        // This is a heuristic and might not be perfect for all graph structures
+        if (Math.abs(fromIndex - toIndex) === 1 || (highlights?.nodes?.includes(edge.from) && visited.includes(edge.to)) || (highlights?.nodes?.includes(edge.to) && visited.includes(edge.from)) ) {
+            return 'hsl(var(--primary))';
+        }
     }
-    return 'stroke-muted-foreground';
-  }
+    
+    return 'hsl(var(--muted-foreground))';
+  };
 
   return (
     <div className="w-full h-full relative bg-muted/30 rounded-lg p-4">
@@ -53,51 +80,65 @@ const GraphVisualizer: React.FC<GraphVisualizerProps> = ({ state }) => {
         </defs>
 
         {/* Edges */}
-        {edges.map((edge, index) => {
-          const fromNode = nodes.find(n => n.id === edge.from);
-          const toNode = nodes.find(n => n.id === edge.to);
-          if (!fromNode || !toNode) return null;
+        <g>
+          {edges.map((edge, index) => {
+            const fromNode = nodes.find((n) => n.id === edge.from);
+            const toNode = nodes.find((n) => n.id === edge.to);
+            if (!fromNode || !toNode) return null;
 
-          return (
-            <line
-              key={`${edge.from}-${edge.to}-${index}`}
-              x1={fromNode.x}
-              y1={fromNode.y}
-              x2={toNode.x}
-              y2={toNode.y}
-              className={cn("stroke-2 transition-all duration-300", getEdgeColor(edge))}
-              markerEnd={graph.directed ? "url(#arrow)" : undefined}
-            />
-          );
-        })}
+            const edgeColor = getEdgeColor(edge);
+
+            return (
+              <line
+                key={`${edge.from}-${edge.to}-${index}`}
+                x1={fromNode.x}
+                y1={fromNode.y}
+                x2={toNode.x}
+                y2={toNode.y}
+                stroke={edgeColor}
+                strokeWidth="2"
+                className="transition-all duration-300"
+                markerEnd={graph.directed ? "url(#arrow)" : undefined}
+              />
+            );
+          })}
+        </g>
+
+        {/* Nodes */}
+        <g>
+          {nodes.map((node) => {
+            const colors = getNodeColor(node.id);
+            return (
+              <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
+                <circle
+                  r="18"
+                  fill={colors.fill}
+                  stroke={colors.stroke}
+                  strokeWidth="2"
+                  className="transition-all duration-300"
+                />
+                <text
+                  textAnchor="middle"
+                  dy="0.3em"
+                  fill={colors.text}
+                  className="font-bold text-sm select-none"
+                >
+                  {node.label}
+                </text>
+              </g>
+            );
+          })}
+        </g>
       </svg>
 
-      {/* Nodes */}
-      {nodes.map(node => (
-        <div
-          key={node.id}
-          className={cn(
-            "absolute w-12 h-12 rounded-full flex items-center justify-center text-primary-foreground font-bold border-2 transition-all duration-300",
-            getNodeColor(node.id)
-          )}
-          style={{
-            left: `${node.x}px`,
-            top: `${node.y}px`,
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          {node.label}
-        </div>
-      ))}
-
       {/* State Display */}
-      <div className="absolute bottom-2 left-2 bg-background/80 p-2 rounded-md text-xs">
+      <div className="absolute bottom-2 left-2 bg-background/80 p-2 rounded-md text-xs w-full max-w-[calc(100%-1rem)]">
          <div className="font-bold mb-1">Queue:</div>
-         <div>[{state.queue?.join(', ') || ''}]</div>
+         <div className="truncate">[{state.queue?.join(', ') || ''}]</div>
          <div className="font-bold mt-2 mb-1">Stack:</div>
-         <div>[{state.stack?.join(', ') || ''}]</div>
+         <div className="truncate">[{state.stack?.join(', ') || ''}]</div>
          <div className="font-bold mt-2 mb-1">Visited:</div>
-         <div>[{visited.join(', ') || ''}]</div>
+         <div className="truncate">[{visited.join(', ') || ''}]</div>
       </div>
     </div>
   );
