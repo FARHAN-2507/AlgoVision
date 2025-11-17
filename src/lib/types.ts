@@ -24,6 +24,15 @@ export interface GraphEdge {
   to: string;
 }
 
+export interface TreeNode {
+    id: string;
+    value: number;
+    x: number;
+    y: number;
+    left: string | null;
+    right: string | null;
+}
+
 export interface VisualizerState {
   array?: number[];
   variables?: Record<string, any>;
@@ -41,9 +50,11 @@ export interface VisualizerState {
     edges: GraphEdge[];
     directed?: boolean;
   };
+  tree?: TreeNode[];
   visited?: string[];
   queue?: string[];
   stack?: string[];
+  traversalOrder?: string[];
 }
 
 

@@ -2,7 +2,8 @@ import React from 'react';
 import { Algorithm, ExecutionStep } from '@/lib/types';
 import BarChartVisualizer from './bar-chart-visualizer';
 import GraphVisualizer from './graph-visualizer';
-import { BarChart2, Share2 } from 'lucide-react';
+import TreeVisualizer from './tree-visualizer';
+import { BarChart2 } from 'lucide-react';
 
 interface VisualizerProps {
   algorithm: Algorithm | null;
@@ -26,7 +27,8 @@ const Visualizer: React.FC<VisualizerProps> = ({ algorithm, executionStep }) => 
         return <BarChartVisualizer state={executionStep.state} />;
       case 'graph':
         return <GraphVisualizer state={executionStep.state} />;
-      // Add cases for other categories like 'tree'
+      case 'tree':
+        return <TreeVisualizer state={executionStep.state} />;
       default:
         return (
           <div className="w-full h-full flex items-center justify-center bg-muted/30 rounded-lg">
