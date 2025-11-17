@@ -56,6 +56,10 @@ export function AlgoVisionDashboard() {
     }
     return [];
   }, [selectedAlgorithm]);
+  
+  const isDynamicArrayAlgorithm = useMemo(() => 
+    selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching'
+  , [selectedAlgorithm]);
 
   // Effect to handle category changes
   useEffect(() => {
@@ -66,26 +70,35 @@ export function AlgoVisionDashboard() {
       setStartNode(undefined);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, availableAlgorithms]);
+  }, [selectedCategory]);
 
+  // Set initial array on client mount for dynamic algorithms
+  useEffect(() => {
+    if (isDynamicArrayAlgorithm) {
+      const newArray = generateRandomArray(arraySize);
+      setInitialArray(newArray);
+    }
+  }, [isDynamicArrayAlgorithm, arraySize]);
+  
   // Effect to handle algorithm or language changes
   useEffect(() => {
     if (selectedAlgorithm) {
       setCode(selectedAlgorithm.code[language]);
       
-      const isDynamicArray = selectedAlgorithm.category === 'sorting' || selectedAlgorithm.category === 'searching';
-      
-      if (isDynamicArray) {
-        const newArray = generateRandomArray(arraySize);
-        setInitialArray(newArray);
-        const initialStep: ExecutionStep = {
-          stepId: 0,
-          type: 'initial',
-          source: { line: 1 },
-          state: { array: newArray },
-          explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
-        };
-        setTrace([initialStep]);
+      if (isDynamicArrayAlgorithm) {
+        // initialArray is set by another effect, so we use it here.
+        if (initialArray.length > 0) {
+          const initialStep: ExecutionStep = {
+            stepId: 0,
+            type: 'initial',
+            source: { line: 1 },
+            state: { array: initialArray },
+            explanation: 'Initial randomized array. Dynamic execution is not yet implemented.'
+          };
+          setTrace([initialStep]);
+        } else {
+          setTrace([]); // Empty trace while array is generating
+        }
       } else {
         setTrace(selectedAlgorithm.trace);
         setInitialArray([]);
@@ -106,7 +119,7 @@ export function AlgoVisionDashboard() {
       setInitialArray([]);
       setStartNode(undefined);
     }
-  }, [selectedAlgorithm, language, arraySize, graphNodes]);
+  }, [selectedAlgorithm, language, initialArray, isDynamicArrayAlgorithm, graphNodes]);
 
   const handleAlgorithmChange = (algoId: string) => {
     const algorithm = algorithms.find(a => a.id === algoId);
@@ -123,8 +136,7 @@ export function AlgoVisionDashboard() {
   };
 
   const handleReset = useCallback(() => {
-    const isDynamicArray = selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching';
-    if (isDynamicArray) {
+    if (isDynamicArrayAlgorithm) {
        const newArray = generateRandomArray(arraySize);
        setInitialArray(newArray);
        const initialStep: ExecutionStep = {
@@ -138,7 +150,7 @@ export function AlgoVisionDashboard() {
     }
     setCurrentStep(0);
     setIsPlaying(false);
-  }, [selectedAlgorithm, arraySize]);
+  }, [isDynamicArrayAlgorithm, arraySize]);
 
   const handleStepForward = useCallback(() => {
     if (currentStep < trace.length - 1) {
@@ -165,7 +177,6 @@ export function AlgoVisionDashboard() {
   }, [isPlaying, currentStep, speed, handleStepForward, trace.length]);
 
   const currentExecutionStep = trace[currentStep];
-  const isDynamicArrayAlgorithm = selectedAlgorithm?.category === 'sorting' || selectedAlgorithm?.category === 'searching';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 h-full">
