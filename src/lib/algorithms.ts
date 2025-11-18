@@ -75,7 +75,7 @@ const selectionSortTrace: ExecutionStep[] = [
     { "stepId": 10, "type": "highlight", "source": { "line": 7 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "highlights": { "indices": [8] }, "sortedIndices": [0] }, "explanation": "New minimum is 4 at index 8." },
     { "stepId": 11, "type": "swap", "source": { "line": 10 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "swaps": [1, 8] }, "explanation": "Swap the found minimum (4) with the second element (10)." },
     { "stepId": 12, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "sortedIndices": [0, 1] }, "explanation": "The second element is now sorted." },
-    { "stepId": 13, "type": "sorted", "source": { "line": 13 }, "state": { "array": [2, 4, 10, 13, 14, 29, 37, 58, 67, 88], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After subsequent passes, the entire array is sorted." }
+    { "stepId": 13, "type": "sorted", "source": { "line": 13 }, "state": { "array": [2, 4, 10, 13, 14, 29, 37, 58, 67, 88], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the entire array is sorted." }
 ];
 
 const insertionSortJsCode = `function insertionSort(arr) {
@@ -684,6 +684,32 @@ const weightedGraphForTrace = {
   directed: true,
 };
 
+const mstGraphForTrace = {
+  nodes: [
+    { id: 'A', label: 'A', x: 50, y: 150 },
+    { id: 'B', label: 'B', x: 150, y: 50 },
+    { id: 'C', label: 'C', x: 150, y: 250 },
+    { id: 'D', label: 'D', x: 250, y: 150 },
+    { id: 'E', label: 'E', x: 350, y: 50 },
+    { id: 'F', label: 'F', x: 350, y: 250 },
+    { id: 'G', label: 'G', x: 450, y: 150 },
+    { id: 'H', label: 'H', x: 250, y: 250},
+    { id: 'I', label: 'I', x: 250, y: 50},
+  ],
+  edges: [
+    { from: 'A', to: 'B', weight: 4 }, { from: 'A', to: 'C', weight: 8 },
+    { from: 'B', to: 'C', weight: 11 }, { from: 'B', to: 'I', weight: 8 },
+    { from: 'C', to: 'H', weight: 1 }, { from: 'C', to: 'D', weight: 7 },
+    { from: 'D', to: 'H', weight: 6 }, { from: 'D', to: 'F', weight: 2 }, { from: 'D', to: 'I', weight: 2 },
+    { from: 'E', to: 'F', weight: 10 }, { from: 'E', to: 'G', weight: 4 }, { from: 'E', to: 'I', weight: 9 },
+    { from: 'F', to: 'G', weight: 14 }, { from: 'F', to: 'H', weight: 4 },
+    { from: 'G', to: 'H', weight: 13 },
+    { from: 'H', to: 'I', weight: 7 },
+  ],
+  directed: false,
+};
+
+
 const dijkstraJsCode = `function dijkstra(graph, startNode) {
     const costs = {};
     const parents = {};
@@ -808,18 +834,24 @@ def prims(graph, start_node):
     return [{'from': u, 'to': v} for u, v in mst]`;
 
 const primsTrace: ExecutionStep[] = [
-    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "graph": weightedGraphForTrace, "visited": ["A"], "highlights": { "nodes": ["A"] } }, "explanation": "Start Prim's from A. Add A to visited set." },
-    { "stepId": 1, "type": "highlight", "source": { "line": 6 }, "state": { "graph": weightedGraphForTrace, "visited": ["A"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'A', to: 'D'}] } }, "explanation": "Consider all edges from A. Smallest is A-B (weight 7)." },
-    { "stepId": 2, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'B'}] } }, "explanation": "Add edge A-B to MST. Add B to visited set." },
-    { "stepId": 3, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}]} }, "explanation": "Add new edges from B to consideration. Smallest available is B-D (weight 2)." },
-    { "stepId": 4, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}] } }, "explanation": "Add edge B-D to MST. Add D to visited set." },
-    { "stepId": 5, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'D', to: 'F'}]} }, "explanation": "Add new edges from D. Smallest is A-C (weight 9) or D-F (weight 9)." },
-    { "stepId": 6, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}] } }, "explanation": "Choose A-C. Add edge A-C to MST. Add C to visited set." },
-    { "stepId": 7, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}] } }, "explanation": "Add edges from C. Smallest available is C-E (weight 2)." },
-    { "stepId": 8, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}] } }, "explanation": "Add edge C-E to MST. Add E to visited set." },
-    { "stepId": 9, "type": "highlight", "source": { "line": 20 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "Add edges from E. Smallest available is D-F (weight 9)." },
-    { "stepId": 10, "type": "visit", "source": { "line": 16 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E", "F"], "highlights": { "nodes": ["F"], "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "Add edge D-F to MST. Add F to visited set." },
-    { "stepId": 11, "type": "sorted", "source": { "line": 29 }, "state": { "graph": weightedGraphForTrace, "visited": ["A", "B", "D", "C", "E", "F"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'B', to: 'D'}, {from: 'A', to: 'C'}, {from: 'C', to: 'E'}, {from: 'D', to: 'F'}] } }, "explanation": "All nodes visited. MST is complete." }
+    { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "graph": mstGraphForTrace, "visited": ["A"], "highlights": { "nodes": ["A"] } }, "explanation": "Start Prim's from A. Add A to visited set." },
+    { "stepId": 1, "type": "highlight", "source": { "line": 6 }, "state": { "graph": mstGraphForTrace, "visited": ["A"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}] } }, "explanation": "Consider all edges from A. Smallest is A-B (weight 4)." },
+    { "stepId": 2, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'B'}] } }, "explanation": "Add edge A-B to MST. Add B to visited set." },
+    { "stepId": 3, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B"], "highlights": { "nodes": ["B"], "edges": [{from: 'A', to: 'C'}, {from: 'B', to: 'I'}, {from: 'A', to: 'B'}] } }, "explanation": "Consider available edges. Smallest are A-C (8) and B-I (8)." },
+    { "stepId": 4, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}] } }, "explanation": "Choose A-C. Add edge A-C to MST. Add C to visited set." },
+    { "stepId": 5, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C"], "highlights": { "nodes": ["C"], "edges": [{from: 'C', to: 'H'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}] } }, "explanation": "Consider edges. Smallest is C-H (weight 1)." },
+    { "stepId": 6, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H"], "highlights": { "nodes": ["H"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}] } }, "explanation": "Add C-H to MST. Add H to visited set." },
+    { "stepId": 7, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H"], "highlights": { "nodes": ["H"], "edges": [{from: 'H', to: 'F'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}] } }, "explanation": "Consider edges. Smallest is H-F (weight 4)." },
+    { "stepId": 8, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F"], "highlights": { "nodes": ["F"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', to: 'F'}] } }, "explanation": "Add H-F to MST. Add F to visited set." },
+    { "stepId": 9, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F"], "highlights": { "nodes": ["F"], "edges": [{from: 'F', to: 'D'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', to: 'F'}] } }, "explanation": "Consider edges. Smallest is F-D (weight 2)." },
+    { "stepId": 10, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}] } }, "explanation": "Add F-D to MST. Add D to visited set." },
+    { "stepId": 11, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D"], "highlights": { "nodes": ["D"], "edges": [{from: 'D', to: 'I'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}] } }, "explanation": "Consider edges. Smallest is D-I (weight 2)." },
+    { "stepId": 12, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I"], "highlights": { "nodes": ["I"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}] } }, "explanation": "Add D-I to MST. Add I to visited set." },
+    { "stepId": 13, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I"], "highlights": { "nodes": ["I"], "edges": [{from: 'I', to: 'E'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}] } }, "explanation": "Consider edges. Smallest is I-E (weight 9)." },
+    { "stepId": 14, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}, {from: 'I', to: 'E'}] } }, "explanation": "Add I-E to MST. Add E to visited set." },
+    { "stepId": 15, "type": "highlight", "source": { "line": 20 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I", "E"], "highlights": { "nodes": ["E"], "edges": [{from: 'E', to: 'G'}, {from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}, {from: 'I', to: 'E'}] } }, "explanation": "Consider edges. Smallest is E-G (weight 4)." },
+    { "stepId": 16, "type": "visit", "source": { "line": 16 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I", "E", "G"], "highlights": { "nodes": ["G"], "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}, {from: 'I', to: 'E'}, {from: 'E', to: 'G'}] } }, "explanation": "Add E-G to MST. Add G to visited set." },
+    { "stepId": 17, "type": "sorted", "source": { "line": 29 }, "state": { "graph": mstGraphForTrace, "visited": ["A", "B", "C", "H", "F", "D", "I", "E", "G"], "highlights": { "edges": [{from: 'A', to: 'B'}, {from: 'A', to: 'C'}, {from: 'C', to: 'H'}, {from: 'H', 'to': 'F'}, {from: 'F', to: 'D'}, {from: 'D', to: 'I'}, {from: 'I', to: 'E'}, {from: 'E', to: 'G'}] } }, "explanation": "All nodes visited. MST is complete." }
 ];
 
 export const algorithms: Algorithm[] = [
