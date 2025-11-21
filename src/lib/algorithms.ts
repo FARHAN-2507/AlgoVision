@@ -1,3 +1,4 @@
+
 import type { Algorithm, ExecutionStep, TreeNode } from './types';
 
 const bubbleSortJsCode = `function bubbleSort(arr) {
@@ -40,7 +41,7 @@ const bubbleSortTrace: ExecutionStep[] = [
   { "stepId": 15, "type": "swap", "source": { "line": 6 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 90, 88], "swaps": [7, 8] }, "explanation": "Swap 90 and 50." },
   { "stepId": 16, "type": "compare", "source": { "line": 5 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 90, 88], "comparisons": [8, 9] }, "explanation": "Comparing 90 and 88." },
   { "stepId": 17, "type": "swap", "source": { "line": 6 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 88, 90], "swaps": [8, 9] }, "explanation": "Swap 90 and 88." },
-  { "stepId": 18, "type": "sorted", "source": { "line": 8 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 88, 90], "sortedIndices": [9] }, "explanation": "End of first pass. 90 is in its final sorted position." },
+  { "stepId": 18, "type": "sorted", "source": { "line": 8 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 88, 90], "sortedIndices": [9] }, "explanation": "End of Pass 1. 90 is sorted." },
   // Pass 2
   { "stepId": 19, "type": "compare", "source": { "line": 5 }, "state": { "array": [34, 25, 12, 22, 11, 64, 5, 50, 88, 90], "comparisons": [0, 1], "sortedIndices": [9] }, "explanation": "Pass 2: Comparing 34 and 25." },
   { "stepId": 20, "type": "swap", "source": { "line": 6 }, "state": { "array": [25, 34, 12, 22, 11, 64, 5, 50, 88, 90], "swaps": [0, 1], "sortedIndices": [9] }, "explanation": "Swap 34 and 25." },
@@ -56,10 +57,63 @@ const bubbleSortTrace: ExecutionStep[] = [
   { "stepId": 30, "type": "compare", "source": { "line": 5 }, "state": { "array": [25, 12, 22, 11, 34, 5, 64, 50, 88, 90], "comparisons": [6, 7], "sortedIndices": [9] }, "explanation": "Comparing 64 and 50." },
   { "stepId": 31, "type": "swap", "source": { "line": 6 }, "state": { "array": [25, 12, 22, 11, 34, 5, 50, 64, 88, 90], "swaps": [6, 7], "sortedIndices": [9] }, "explanation": "Swap 64 and 50." },
   { "stepId": 32, "type": "compare", "source": { "line": 5 }, "state": { "array": [25, 12, 22, 11, 34, 5, 50, 64, 88, 90], "comparisons": [7, 8], "sortedIndices": [9] }, "explanation": "Comparing 64 and 88. No swap." },
-  { "stepId": 33, "type": "sorted", "source": { "line": 8 }, "state": { "array": [25, 12, 22, 11, 34, 5, 50, 64, 88, 90], "sortedIndices": [8, 9] }, "explanation": "End of second pass. 88 is in its final sorted position." },
-  // ... many more passes ...
-  { "stepId": 34, "type": "sorted", "source": { "line": 10 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the array is fully sorted." }
+  { "stepId": 33, "type": "sorted", "source": { "line": 8 }, "state": { "array": [25, 12, 22, 11, 34, 5, 50, 64, 88, 90], "sortedIndices": [8, 9] }, "explanation": "End of Pass 2. 88 is sorted." },
+  // Pass 3
+  { "stepId": 34, "type": "compare", "source": { "line": 5 }, "state": { "array": [25, 12, 22, 11, 34, 5, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [8, 9] }, "explanation": "Pass 3: Comparing 25 and 12." },
+  { "stepId": 35, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 25, 22, 11, 34, 5, 50, 64, 88, 90], "swaps": [0, 1], "sortedIndices": [8, 9] }, "explanation": "Swap 25 and 12." },
+  { "stepId": 36, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 25, 22, 11, 34, 5, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [8, 9] }, "explanation": "Comparing 25 and 22." },
+  { "stepId": 37, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 22, 25, 11, 34, 5, 50, 64, 88, 90], "swaps": [1, 2], "sortedIndices": [8, 9] }, "explanation": "Swap 25 and 22." },
+  { "stepId": 38, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 25, 11, 34, 5, 50, 64, 88, 90], "comparisons": [2, 3], "sortedIndices": [8, 9] }, "explanation": "Comparing 25 and 11." },
+  { "stepId": 39, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 22, 11, 25, 34, 5, 50, 64, 88, 90], "swaps": [2, 3], "sortedIndices": [8, 9] }, "explanation": "Swap 25 and 11." },
+  { "stepId": 40, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 34, 5, 50, 64, 88, 90], "comparisons": [3, 4], "sortedIndices": [8, 9] }, "explanation": "Comparing 25 and 34. No swap." },
+  { "stepId": 41, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 34, 5, 50, 64, 88, 90], "comparisons": [4, 5], "sortedIndices": [8, 9] }, "explanation": "Comparing 34 and 5." },
+  { "stepId": 42, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "swaps": [4, 5], "sortedIndices": [8, 9] }, "explanation": "Swap 34 and 5." },
+  { "stepId": 43, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "comparisons": [5, 6], "sortedIndices": [8, 9] }, "explanation": "Comparing 34 and 50. No swap." },
+  { "stepId": 44, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "comparisons": [6, 7], "sortedIndices": [8, 9] }, "explanation": "Comparing 50 and 64. No swap." },
+  { "stepId": 45, "type": "sorted", "source": { "line": 8 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "sortedIndices": [7, 8, 9] }, "explanation": "End of Pass 3. 64 is sorted." },
+  // Pass 4
+  { "stepId": 46, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [7, 8, 9] }, "explanation": "Pass 4: Comparing 12 and 22. No swap." },
+  { "stepId": 47, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 22, 11, 25, 5, 34, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [7, 8, 9] }, "explanation": "Comparing 22 and 11." },
+  { "stepId": 48, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 11, 22, 25, 5, 34, 50, 64, 88, 90], "swaps": [1, 2], "sortedIndices": [7, 8, 9] }, "explanation": "Swap 22 and 11." },
+  { "stepId": 49, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 22, 25, 5, 34, 50, 64, 88, 90], "comparisons": [2, 3], "sortedIndices": [7, 8, 9] }, "explanation": "Comparing 22 and 25. No swap." },
+  { "stepId": 50, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 22, 25, 5, 34, 50, 64, 88, 90], "comparisons": [3, 4], "sortedIndices": [7, 8, 9] }, "explanation": "Comparing 25 and 5." },
+  { "stepId": 51, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 11, 22, 5, 25, 34, 50, 64, 88, 90], "swaps": [3, 4], "sortedIndices": [7, 8, 9] }, "explanation": "Swap 25 and 5." },
+  { "stepId": 52, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 22, 5, 25, 34, 50, 64, 88, 90], "comparisons": [4, 5], "sortedIndices": [7, 8, 9] }, "explanation": "Comparing 25 and 34. No swap." },
+  { "stepId": 53, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 22, 5, 25, 34, 50, 64, 88, 90], "comparisons": [5, 6], "sortedIndices": [7, 8, 9] }, "explanation": "Comparing 34 and 50. No swap." },
+  { "stepId": 54, "type": "sorted", "source": { "line": 8 }, "state": { "array": [12, 11, 22, 5, 25, 34, 50, 64, 88, 90], "sortedIndices": [6, 7, 8, 9] }, "explanation": "End of Pass 4. 50 is sorted." },
+  // Pass 5
+  { "stepId": 55, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 22, 5, 25, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Pass 5: Comparing 12 and 11." },
+  { "stepId": 56, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 12, 22, 5, 25, 34, 50, 64, 88, 90], "swaps": [0, 1], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Swap 12 and 11." },
+  { "stepId": 57, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 22, 5, 25, 34, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Comparing 12 and 22. No swap." },
+  { "stepId": 58, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 22, 5, 25, 34, 50, 64, 88, 90], "comparisons": [2, 3], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Comparing 22 and 5." },
+  { "stepId": 59, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "swaps": [2, 3], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Swap 22 and 5." },
+  { "stepId": 60, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "comparisons": [3, 4], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Comparing 22 and 25. No swap." },
+  { "stepId": 61, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "comparisons": [4, 5], "sortedIndices": [6, 7, 8, 9] }, "explanation": "Comparing 25 and 34. No swap." },
+  { "stepId": 62, "type": "sorted", "source": { "line": 8 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "End of Pass 5. 34 is sorted." },
+  // Pass 6
+  { "stepId": 63, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "Pass 6: Comparing 11 and 12. No swap." },
+  { "stepId": 64, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 5, 22, 25, 34, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "Comparing 12 and 5." },
+  { "stepId": 65, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 5, 12, 22, 25, 34, 50, 64, 88, 90], "swaps": [1, 2], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "Swap 12 and 5." },
+  { "stepId": 66, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 5, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [2, 3], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "Comparing 12 and 22. No swap." },
+  { "stepId": 67, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 5, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [3, 4], "sortedIndices": [5, 6, 7, 8, 9] }, "explanation": "Comparing 22 and 25. No swap." },
+  { "stepId": 68, "type": "sorted", "source": { "line": 8 }, "state": { "array": [11, 5, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [4, 5, 6, 7, 8, 9] }, "explanation": "End of Pass 6. 25 is sorted." },
+  // Pass 7
+  { "stepId": 69, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 5, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [4, 5, 6, 7, 8, 9] }, "explanation": "Pass 7: Comparing 11 and 5." },
+  { "stepId": 70, "type": "swap", "source": { "line": 6 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "swaps": [0, 1], "sortedIndices": [4, 5, 6, 7, 8, 9] }, "explanation": "Swap 11 and 5." },
+  { "stepId": 71, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [4, 5, 6, 7, 8, 9] }, "explanation": "Comparing 11 and 12. No swap." },
+  { "stepId": 72, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [2, 3], "sortedIndices": [4, 5, 6, 7, 8, 9] }, "explanation": "Comparing 12 and 22. No swap." },
+  { "stepId": 73, "type": "sorted", "source": { "line": 8 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [3, 4, 5, 6, 7, 8, 9] }, "explanation": "End of Pass 7. 22 is sorted." },
+  // Pass 8
+  { "stepId": 74, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [3, 4, 5, 6, 7, 8, 9] }, "explanation": "Pass 8: Comparing 5 and 11. No swap." },
+  { "stepId": 75, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [1, 2], "sortedIndices": [3, 4, 5, 6, 7, 8, 9] }, "explanation": "Comparing 11 and 12. No swap." },
+  { "stepId": 76, "type": "sorted", "source": { "line": 8 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "End of Pass 8. 12 is sorted." },
+  // Pass 9
+  { "stepId": 77, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "comparisons": [0, 1], "sortedIndices": [2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "Pass 9: Comparing 5 and 11. No swap." },
+  { "stepId": 78, "type": "sorted", "source": { "line": 8 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "End of Pass 9. 11 is sorted." },
+  // Final
+  { "stepId": 79, "type": "sorted", "source": { "line": 10 }, "state": { "array": [5, 11, 12, 22, 25, 34, 50, 64, 88, 90], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "Array is fully sorted." }
 ];
+
 
 const selectionSortJsCode = `function selectionSort(arr) {
   const n = arr.length;
@@ -104,12 +158,31 @@ const selectionSortTrace: ExecutionStep[] = [
     { "stepId": 14, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "sortedIndices": [0] }, "explanation": "The first element is now sorted." },
     // Pass 2
     { "stepId": 15, "type": "highlight", "source": { "line": 4 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "highlights": { "indices": [1] }, "sortedIndices": [0] }, "explanation": "Pass 2: Assume second element (10) is the minimum of the unsorted part." },
-    { "stepId": 16, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [8, 1], "sortedIndices": [0] }, "explanation": "Comparing 4 with current minimum (10). 4 is smaller." },
-    { "stepId": 17, "type": "highlight", "source": { "line": 7 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "highlights": { "indices": [8] }, "sortedIndices": [0] }, "explanation": "New minimum is 4 at index 8." },
-    { "stepId": 18, "type": "swap", "source": { "line": 10 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "swaps": [1, 8], "sortedIndices": [0] }, "explanation": "End of pass. Swap the found minimum (4) with the second element (10)." },
-    { "stepId": 19, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "sortedIndices": [0, 1] }, "explanation": "The second element is now sorted." },
-    // ... further passes
-    { "stepId": 20, "type": "sorted", "source": { "line": 13 }, "state": { "array": [2, 4, 10, 13, 14, 29, 37, 58, 67, 88], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the entire array is sorted." }
+    { "stepId": 16, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [2, 1], "sortedIndices": [0] }, "explanation": "Comparing 14 with 10. No change." },
+    { "stepId": 17, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [3, 1], "sortedIndices": [0] }, "explanation": "Comparing 37 with 10. No change." },
+    { "stepId": 18, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [4, 1], "sortedIndices": [0] }, "explanation": "Comparing 13 with 10. No change." },
+    { "stepId": 19, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [5, 1], "sortedIndices": [0] }, "explanation": "Comparing 58 with 10. No change." },
+    { "stepId": 20, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [6, 1], "sortedIndices": [0] }, "explanation": "Comparing 29 with 10. No change." },
+    { "stepId": 21, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [7, 1], "sortedIndices": [0] }, "explanation": "Comparing 88 with 10. No change." },
+    { "stepId": 22, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [8, 1], "sortedIndices": [0] }, "explanation": "Comparing 4 with current minimum (10). 4 is smaller." },
+    { "stepId": 23, "type": "highlight", "source": { "line": 7 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "highlights": { "indices": [8] }, "sortedIndices": [0] }, "explanation": "New minimum is 4 at index 8." },
+    { "stepId": 24, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 10, 14, 37, 13, 58, 29, 88, 4, 67], "comparisons": [9, 8], "sortedIndices": [0] }, "explanation": "Comparing 67 with 4. No change." },
+    { "stepId": 25, "type": "swap", "source": { "line": 10 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "swaps": [1, 8], "sortedIndices": [0] }, "explanation": "End of pass. Swap the found minimum (4) with the second element (10)." },
+    { "stepId": 26, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "sortedIndices": [0, 1] }, "explanation": "The second element is now sorted." },
+     // Pass 3
+    { "stepId": 27, "type": "highlight", "source": { "line": 4 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "highlights": { "indices": [2] }, "sortedIndices": [0, 1] }, "explanation": "Pass 3: Assume 14 is min." },
+    { "stepId": 28, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "comparisons": [8, 2], "sortedIndices": [0, 1] }, "explanation": "Comparing 10 with 14. 10 is smaller." },
+    { "stepId": 29, "type": "highlight", "source": { "line": 7 }, "state": { "array": [2, 4, 14, 37, 13, 58, 29, 88, 10, 67], "highlights": { "indices": [8] }, "sortedIndices": [0, 1] }, "explanation": "New minimum is 10." },
+    { "stepId": 30, "type": "swap", "source": { "line": 10 }, "state": { "array": [2, 4, 10, 37, 13, 58, 29, 88, 14, 67], "swaps": [2, 8], "sortedIndices": [0, 1] }, "explanation": "Swap 14 and 10." },
+    { "stepId": 31, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 4, 10, 37, 13, 58, 29, 88, 14, 67], "sortedIndices": [0, 1, 2] }, "explanation": "10 is sorted." },
+    // Pass 4
+    { "stepId": 32, "type": "highlight", "source": { "line": 4 }, "state": { "array": [2, 4, 10, 37, 13, 58, 29, 88, 14, 67], "highlights": { "indices": [3] }, "sortedIndices": [0, 1, 2] }, "explanation": "Pass 4: Assume 37 is min." },
+    { "stepId": 33, "type": "compare", "source": { "line": 6 }, "state": { "array": [2, 4, 10, 37, 13, 58, 29, 88, 14, 67], "comparisons": [4, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Comparing 13 with 37. 13 is smaller." },
+    { "stepId": 34, "type": "highlight", "source": { "line": 7 }, "state": { "array": [2, 4, 10, 37, 13, 58, 29, 88, 14, 67], "highlights": { "indices": [4] }, "sortedIndices": [0, 1, 2] }, "explanation": "New min is 13." },
+    { "stepId": 35, "type": "swap", "source": { "line": 10 }, "state": { "array": [2, 4, 10, 13, 37, 58, 29, 88, 14, 67], "swaps": [3, 4], "sortedIndices": [0, 1, 2] }, "explanation": "Swap 37 and 13." },
+    { "stepId": 36, "type": "sorted", "source": { "line": 11 }, "state": { "array": [2, 4, 10, 13, 37, 58, 29, 88, 14, 67], "sortedIndices": [0, 1, 2, 3] }, "explanation": "13 is sorted." },
+    // ... continue for all passes
+    { "stepId": 37, "type": "sorted", "source": { "line": 13 }, "state": { "array": [2, 4, 10, 13, 14, 29, 37, 58, 67, 88], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the entire array is sorted." }
 ];
 
 const insertionSortJsCode = `function insertionSort(arr) {
@@ -137,24 +210,39 @@ const insertionSortPyCode = `def insertion_sort(arr):
     
 const insertionSortTrace: ExecutionStep[] = [
     { "stepId": 0, "type": "initial", "source": { "line": 1 }, "state": { "array": [12, 11, 13, 5, 6, 7, 9, 1, 3, 10] }, "explanation": "Initial array. The first element (12) is considered sorted." },
+    // i = 1
     { "stepId": 1, "type": "highlight", "source": { "line": 3 }, "state": { "array": [12, 11, 13, 5, 6, 7, 9, 1, 3, 10], "highlights": { "indices": [1] }, "sortedIndices": [0] }, "explanation": "Select element 11 (key) to insert into the sorted portion." },
     { "stepId": 2, "type": "compare", "source": { "line": 5 }, "state": { "array": [12, 11, 13, 5, 6, 7, 9, 1, 3, 10], "comparisons": [0, 1], "sortedIndices": [0] }, "explanation": "Compare key (11) with 12. 11 is smaller." },
     { "stepId": 3, "type": "swap", "source": { "line": 6 }, "state": { "array": [12, 12, 13, 5, 6, 7, 9, 1, 3, 10], "swaps": [0, 1] }, "explanation": "Shift 12 to the right." },
     { "stepId": 4, "type": "swap", "source": { "line": 9 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "swaps": [0, 0] }, "explanation": "Insert key (11) at the correct position." },
     { "stepId": 5, "type": "sorted", "source": { "line": 10 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "sortedIndices": [0, 1] }, "explanation": "Now, [11, 12] is the sorted portion." },
-    { "stepId": 6, "type": "highlight", "source": { "line": 3 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "highlights": { "indices": [2] }, "sortedIndices": [0, 1] }, "explanation": "Select element 13. Compare with 12. No shift needed." },
+    // i = 2
+    { "stepId": 6, "type": "highlight", "source": { "line": 3 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "highlights": { "indices": [2] }, "sortedIndices": [0, 1] }, "explanation": "Select element 13. Compare with 12. 13 is larger, no shift needed." },
     { "stepId": 7, "type": "swap", "source": { "line": 9 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "swaps": [2, 2] }, "explanation": "Insert 13 in its current place." },
     { "stepId": 8, "type": "sorted", "source": { "line": 10 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "sortedIndices": [0, 1, 2] }, "explanation": "Now, [11, 12, 13] is the sorted portion." },
+    // i = 3
     { "stepId": 9, "type": "highlight", "source": { "line": 3 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "highlights": { "indices": [3] }, "sortedIndices": [0, 1, 2] }, "explanation": "Select element 5 (key)." },
-    { "stepId": 10, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "comparisons": [2, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 13." },
+    { "stepId": 10, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 13, 5, 6, 7, 9, 1, 3, 10], "comparisons": [2, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 13. 5 is smaller." },
     { "stepId": 11, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 12, 13, 13, 6, 7, 9, 1, 3, 10], "swaps": [2, 3] }, "explanation": "Shift 13 right." },
-    { "stepId": 12, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 13, 13, 6, 7, 9, 1, 3, 10], "comparisons": [1, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 12." },
+    { "stepId": 12, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 13, 13, 6, 7, 9, 1, 3, 10], "comparisons": [1, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 12. 5 is smaller." },
     { "stepId": 13, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 12, 12, 13, 6, 7, 9, 1, 3, 10], "swaps": [1, 2] }, "explanation": "Shift 12 right." },
-    { "stepId": 14, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 12, 13, 6, 7, 9, 1, 3, 10], "comparisons": [0, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 11." },
+    { "stepId": 14, "type": "compare", "source": { "line": 5 }, "state": { "array": [11, 12, 12, 13, 6, 7, 9, 1, 3, 10], "comparisons": [0, 3], "sortedIndices": [0, 1, 2] }, "explanation": "Compare key (5) with 11. 5 is smaller." },
     { "stepId": 15, "type": "swap", "source": { "line": 6 }, "state": { "array": [11, 11, 12, 13, 6, 7, 9, 1, 3, 10], "swaps": [0, 1] }, "explanation": "Shift 11 right." },
     { "stepId": 16, "type": "swap", "source": { "line": 9 }, "state": { "array": [5, 11, 12, 13, 6, 7, 9, 1, 3, 10], "swaps": [0, 0] }, "explanation": "Insert key (5) at the beginning." },
-    // ... further steps
-    { "stepId": 17, "type": "sorted", "source": { "line": 11 }, "state": { "array": [1, 3, 5, 6, 7, 9, 10, 11, 12, 13], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the array is fully sorted." }
+    { "stepId": 17, "type": "sorted", "source": { "line": 10 }, "state": { "array": [5, 11, 12, 13, 6, 7, 9, 1, 3, 10], "sortedIndices": [0, 1, 2, 3] }, "explanation": "Now, [5, 11, 12, 13] is the sorted portion." },
+    // i = 4
+    { "stepId": 18, "type": "highlight", "source": { "line": 3 }, "state": { "array": [5, 11, 12, 13, 6, 7, 9, 1, 3, 10], "highlights": { "indices": [4] }, "sortedIndices": [0, 1, 2, 3] }, "explanation": "Select element 6 (key)." },
+    { "stepId": 19, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 13, 6, 7, 9, 1, 3, 10], "comparisons": [3, 4], "sortedIndices": [0, 1, 2, 3] }, "explanation": "Compare 6 with 13. Shift." },
+    { "stepId": 20, "type": "swap", "source": { "line": 6 }, "state": { "array": [5, 11, 12, 13, 13, 7, 9, 1, 3, 10], "swaps": [3, 4] }, "explanation": "Shift 13." },
+    { "stepId": 21, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 13, 13, 7, 9, 1, 3, 10], "comparisons": [2, 4], "sortedIndices": [0, 1, 2, 3] }, "explanation": "Compare 6 with 12. Shift." },
+    { "stepId": 22, "type": "swap", "source": { "line": 6 }, "state": { "array": [5, 11, 12, 12, 13, 7, 9, 1, 3, 10], "swaps": [2, 3] }, "explanation": "Shift 12." },
+    { "stepId": 23, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 12, 12, 13, 7, 9, 1, 3, 10], "comparisons": [1, 4], "sortedIndices": [0, 1, 2, 3] }, "explanation": "Compare 6 with 11. Shift." },
+    { "stepId": 24, "type": "swap", "source": { "line": 6 }, "state": { "array": [5, 11, 11, 12, 13, 7, 9, 1, 3, 10], "swaps": [1, 2] }, "explanation": "Shift 11." },
+    { "stepId": 25, "type": "compare", "source": { "line": 5 }, "state": { "array": [5, 11, 11, 12, 13, 7, 9, 1, 3, 10], "comparisons": [0, 4], "sortedIndices": [0, 1, 2, 3] }, "explanation": "Compare 6 with 5. No shift." },
+    { "stepId": 26, "type": "swap", "source": { "line": 9 }, "state": { "array": [5, 6, 11, 12, 13, 7, 9, 1, 3, 10], "swaps": [1, 1] }, "explanation": "Insert 6." },
+    { "stepId": 27, "type": "sorted", "source": { "line": 10 }, "state": { "array": [5, 6, 11, 12, 13, 7, 9, 1, 3, 10], "sortedIndices": [0, 1, 2, 3, 4] }, "explanation": "Now, [5, 6, 11, 12, 13] is sorted." },
+    // ... continue for all elements
+    { "stepId": 28, "type": "sorted", "source": { "line": 11 }, "state": { "array": [1, 3, 5, 6, 7, 9, 10, 11, 12, 13], "sortedIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, "explanation": "After all passes, the array is fully sorted." }
 ];
 
 const quickSortJsCode = `function quickSort(arr, low, high) {
@@ -1155,3 +1243,5 @@ export const algorithmCategories = [
   { id: 'mst', name: 'Minimum Spanning Tree' },
   { id: 'tree', name: 'Tree Traversal' },
 ];
+
+    
