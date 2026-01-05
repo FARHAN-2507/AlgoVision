@@ -1,3 +1,14 @@
+## 🚀 Run with Docker (Recommended)
+
+### Requirements
+- Docker
+- Docker Compose
+
+### Run
+```bash
+docker compose up
+
+
 # Project Title
 
 A brief description of what this project does and why it exists.
