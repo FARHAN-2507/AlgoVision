@@ -9,13 +9,6 @@
 docker compose up
 
 
-# Project Title
-
-A brief description of what this project does and why it exists.
-
-## Installation
-
-Instructions on how to get your development environment set up.
 
 ```bash
 # Example
@@ -33,10 +26,3 @@ How to use your project.
 npm start
 ```
 
-## Contributing
-
-Guidelines for contributing to this project.
-
-## License
-
-This project is licensed under the Md Farhan - see the [LICENSE.md](LICENSE.md) file for details.
